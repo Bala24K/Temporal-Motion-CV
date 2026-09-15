@@ -1,0 +1,352 @@
+{
+  "total_clips_evaluated": 20,
+  "successful_inferences": 20,
+  "failed_inferences": 0,
+  "success_rate": 1.0,
+  "valid_probability_ratio": 1.0,
+  "average_inference_ms_per_clip": 6.556332111358643,
+  "total_processed_frames": 726,
+  "effective_inference_fps": 5536.632279062156,
+  "clip_results": [
+    {
+      "exercise": "squat",
+      "confidence": 0.95,
+      "probabilities": {
+        "bicep_curl": 0.02,
+        "squat": 0.95,
+        "shoulder_press": 0.02,
+        "lateral_raise": 0.01
+      },
+      "frame_count": 45,
+      "valid_pose_ratio": 1.0,
+      "video_id": "00000008.mp4",
+      "heuristic_label": "squat",
+      "inference_time_ms": 6.706476211547852,
+      "probability_bounded": true,
+      "probability_sum_valid": true
+    },
+    {
+      "exercise": "squat",
+      "confidence": 0.71,
+      "probabilities": {
+        "bicep_curl": 0.02,
+        "squat": 0.71,
+        "shoulder_press": 0.24,
+        "lateral_raise": 0.03
+      },
+      "frame_count": 44,
+      "valid_pose_ratio": 1.0,
+      "video_id": "00000009.mp4",
+      "heuristic_label": "squat",
+      "inference_time_ms": 6.158113479614258,
+      "probability_bounded": true,
+      "probability_sum_valid": true
+    },
+    {
+      "exercise": "squat",
+      "confidence": 0.71,
+      "probabilities": {
+        "bicep_curl": 0.2,
+        "squat": 0.71,
+        "shoulder_press": 0.08,
+        "lateral_raise": 0.01
+      },
+      "frame_count": 33,
+      "valid_pose_ratio": 1.0,
+      "video_id": "00000010.mp4",
+      "heuristic_label": "squat",
+      "inference_time_ms": 6.867885589599609,
+      "probability_bounded": true,
+      "probability_sum_valid": true
+    },
+    {
+      "exercise": "squat",
+      "confidence": 0.89,
+      "probabilities": {
+        "bicep_curl": 0.08,
+        "squat": 0.89,
+        "shoulder_press": 0.03,
+        "lateral_raise": 0.0
+      },
+      "frame_count": 35,
+      "valid_pose_ratio": 1.0,
+      "video_id": "00000011.mp4",
+      "heuristic_label": "squat",
+      "inference_time_ms": 7.079362869262695,
+      "probability_bounded": true,
+      "probability_sum_valid": true
+    },
+    {
+      "exercise": "squat",
+      "confidence": 0.9,
+      "probabilities": {
+        "bicep_curl": 0.03,
+        "squat": 0.9,
+        "shoulder_press": 0.06,
+        "lateral_raise": 0.01
+      },
+      "frame_count": 43,
+      "valid_pose_ratio": 1.0,
+      "video_id": "00000012.mp4",
+      "heuristic_label": "squat",
+      "inference_time_ms": 6.801605224609375,
+      "probability_bounded": true,
+      "probability_sum_valid": true
+    },
+    {
+      "exercise": "squat",
+      "confidence": 0.93,
+      "probabilities": {
+        "bicep_curl": 0.03,
+        "squat": 0.93,
+        "shoulder_press": 0.04,
+        "lateral_raise": 0.0
+      },
+      "frame_count": 39,
+      "valid_pose_ratio": 1.0,
+      "video_id": "00000013.mp4",
+      "heuristic_label": "squat",
+      "inference_time_ms": 5.887508392333984,
+      "probability_bounded": true,
+      "probability_sum_valid": true
+    },
+    {
+      "exercise": "squat",
+      "confidence": 0.77,
+      "probabilities": {
+        "bicep_curl": 0.1,
+        "squat": 0.77,
+        "shoulder_press": 0.08,
+        "lateral_raise": 0.05
+      },
+      "frame_count": 12,
+      "valid_pose_ratio": 1.0,
+      "video_id": "00000014.mp4",
+      "heuristic_label": "squat",
+      "inference_time_ms": 5.541324615478516,
+      "probability_bounded": true,
+      "probability_sum_valid": true
+    },
+    {
+      "exercise": "shoulder_press",
+      "confidence": 0.78,
+      "probabilities": {
+        "bicep_curl": 0.03,
+        "squat": 0.09,
+        "shoulder_press": 0.78,
+        "lateral_raise": 0.1
+      },
+      "frame_count": 27,
+      "valid_pose_ratio": 1.0,
+      "video_id": "00000016.mp4",
+      "heuristic_label": "shoulder_press",
+      "inference_time_ms": 6.636142730712891,
+      "probability_bounded": true,
+      "probability_sum_valid": true
+    },
+    {
+      "exercise": "shoulder_press",
+      "confidence": 0.83,
+      "probabilities": {
+        "bicep_curl": 0.02,
+        "squat": 0.11,
+        "shoulder_press": 0.83,
+        "lateral_raise": 0.04
+      },
+      "frame_count": 44,
+      "valid_pose_ratio": 1.0,
+      "video_id": "00000017.mp4",
+      "heuristic_label": "shoulder_press",
+      "inference_time_ms": 6.946325302124023,
+      "probability_bounded": true,
+      "probability_sum_valid": true
+    },
+    {
+      "exercise": "squat",
+      "confidence": 0.89,
+      "probabilities": {
+        "bicep_curl": 0.0,
+        "squat": 0.89,
+        "shoulder_press": 0.09,
+        "lateral_raise": 0.02
+      },
+      "frame_count": 44,
+      "valid_pose_ratio": 1.0,
+      "video_id": "00000018.mp4",
+      "heuristic_label": "squat",
+      "inference_time_ms": 6.680965423583984,
+      "probability_bounded": true,
+      "probability_sum_valid": true
+    },
+    {
+      "exercise": "squat",
+      "confidence": 0.95,
+      "probabilities": {
+        "bicep_curl": 0.02,
+        "squat": 0.95,
+        "shoulder_press": 0.03,
+        "lateral_raise": 0.0
+      },
+      "frame_count": 44,
+      "valid_pose_ratio": 1.0,
+      "video_id": "00000021.mp4",
+      "heuristic_label": "squat",
+      "inference_time_ms": 6.641626358032227,
+      "probability_bounded": true,
+      "probability_sum_valid": true
+    },
+    {
+      "exercise": "squat",
+      "confidence": 0.88,
+      "probabilities": {
+        "bicep_curl": 0.0,
+        "squat": 0.88,
+        "shoulder_press": 0.09,
+        "lateral_raise": 0.03
+      },
+      "frame_count": 44,
+      "valid_pose_ratio": 1.0,
+      "video_id": "00000022.mp4",
+      "heuristic_label": "squat",
+      "inference_time_ms": 7.444858551025391,
+      "probability_bounded": true,
+      "probability_sum_valid": true
+    },
+    {
+      "exercise": "shoulder_press",
+      "confidence": 0.51,
+      "probabilities": {
+        "bicep_curl": 0.1,
+        "squat": 0.29,
+        "shoulder_press": 0.51,
+        "lateral_raise": 0.1
+      },
+      "frame_count": 44,
+      "valid_pose_ratio": 1.0,
+      "video_id": "00000023.mp4",
+      "heuristic_label": "squat",
+      "inference_time_ms": 6.997823715209961,
+      "probability_bounded": true,
+      "probability_sum_valid": true
+    },
+    {
+      "exercise": "bicep_curl",
+      "confidence": 0.76,
+      "probabilities": {
+        "bicep_curl": 0.76,
+        "squat": 0.2,
+        "shoulder_press": 0.02,
+        "lateral_raise": 0.02
+      },
+      "frame_count": 13,
+      "valid_pose_ratio": 1.0,
+      "video_id": "00000028.mp4",
+      "heuristic_label": "bicep_curl",
+      "inference_time_ms": 5.274772644042969,
+      "probability_bounded": true,
+      "probability_sum_valid": true
+    },
+    {
+      "exercise": "squat",
+      "confidence": 0.96,
+      "probabilities": {
+        "bicep_curl": 0.0,
+        "squat": 0.96,
+        "shoulder_press": 0.04,
+        "lateral_raise": 0.0
+      },
+      "frame_count": 43,
+      "valid_pose_ratio": 1.0,
+      "video_id": "00000029.mp4",
+      "heuristic_label": "squat",
+      "inference_time_ms": 8.624792098999023,
+      "probability_bounded": true,
+      "probability_sum_valid": true
+    },
+    {
+      "exercise": "squat",
+      "confidence": 0.68,
+      "probabilities": {
+        "bicep_curl": 0.24,
+        "squat": 0.68,
+        "shoulder_press": 0.02,
+        "lateral_raise": 0.06
+      },
+      "frame_count": 38,
+      "valid_pose_ratio": 1.0,
+      "video_id": "00000033.mp4",
+      "heuristic_label": "squat",
+      "inference_time_ms": 6.212711334228516,
+      "probability_bounded": true,
+      "probability_sum_valid": true
+    },
+    {
+      "exercise": "squat",
+      "confidence": 0.7,
+      "probabilities": {
+        "bicep_curl": 0.15,
+        "squat": 0.7,
+        "shoulder_press": 0.13,
+        "lateral_raise": 0.02
+      },
+      "frame_count": 29,
+      "valid_pose_ratio": 1.0,
+      "video_id": "00000034.mp4",
+      "heuristic_label": "squat",
+      "inference_time_ms": 6.3018798828125,
+      "probability_bounded": true,
+      "probability_sum_valid": true
+    },
+    {
+      "exercise": "squat",
+      "confidence": 0.93,
+      "probabilities": {
+        "bicep_curl": 0.05,
+        "squat": 0.93,
+        "shoulder_press": 0.02,
+        "lateral_raise": 0.0
+      },
+      "frame_count": 45,
+      "valid_pose_ratio": 1.0,
+      "video_id": "00000035.mp4",
+      "heuristic_label": "squat",
+      "inference_time_ms": 6.2351226806640625,
+      "probability_bounded": true,
+      "probability_sum_valid": true
+    },
+    {
+      "exercise": "squat",
+      "confidence": 0.93,
+      "probabilities": {
+        "bicep_curl": 0.03,
+        "squat": 0.93,
+        "shoulder_press": 0.04,
+        "lateral_raise": 0.0
+      },
+      "frame_count": 25,
+      "valid_pose_ratio": 1.0,
+      "video_id": "00000036.mp4",
+      "heuristic_label": "squat",
+      "inference_time_ms": 5.644559860229492,
+      "probability_bounded": true,
+      "probability_sum_valid": true
+    },
+    {
+      "exercise": "bicep_curl",
+      "confidence": 0.46,
+      "probabilities": {
+        "bicep_curl": 0.46,
+        "squat": 0.06,
+        "shoulder_press": 0.04,
+        "lateral_raise": 0.44
+      },
+      "frame_count": 35,
+      "valid_pose_ratio": 1.0,
+      "video_id": "00000037.mp4",
+      "heuristic_label": "bicep_curl",
+      "inference_time_ms": 6.442785263061523,
+      "probability_bounded": true,
+      "probability_sum_valid": true
+    }
+  ]
+}

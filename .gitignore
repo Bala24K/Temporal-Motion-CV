@@ -1,0 +1,38 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Caches and logs
+.pytest_cache/
+.coverage
+*.log
+
+# Large Datasets & Media
+QEVD-FIT-300k-Part-1/
+*.mp4
+*.avi
+*.mov
+*.mkv
+*.webm
+
+# Large model artifacts & binary caches
+data/*.pkl
+*.pkl
+*.joblib
+*.task
+*.pth
+*.pt
+*.onnx
+*.h5
+
+# Environments & IDEs
+.venv/
+venv/
+env/
+.idea/
+.vscode/
+
+# Temporary scratch space
+scratch/

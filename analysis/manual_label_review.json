@@ -1,0 +1,617 @@
+{
+  "agreement_stats": {
+    "total_reviewed": 55,
+    "correct": 46,
+    "incorrect": 0,
+    "ambiguous": 9,
+    "unusable": 0,
+    "heuristic_agreement_rate": 0.8363636363636363
+  },
+  "reviews": {
+    "00000017.mp4": {
+      "video_id": "00000017.mp4",
+      "assigned_label": "shoulder_press",
+      "kinematics": {
+        "knee_rom": 17.381981571255174,
+        "elbow_rom": 99.5587520644159,
+        "wrist_above_ratio": 1.0
+      },
+      "status": "correct",
+      "notes": "Confirmed shoulder press posture"
+    },
+    "00000023.mp4": {
+      "video_id": "00000023.mp4",
+      "assigned_label": "squat",
+      "kinematics": {
+        "knee_rom": 29.958864978641014,
+        "elbow_rom": 25.12304531869529,
+        "wrist_above_ratio": 0.7045454545454546
+      },
+      "status": "correct",
+      "notes": "Confirmed deep squat excursion"
+    },
+    "00000037.mp4": {
+      "video_id": "00000037.mp4",
+      "assigned_label": "bicep_curl",
+      "kinematics": {
+        "knee_rom": 16.737715814237333,
+        "elbow_rom": 33.33232739478191,
+        "wrist_above_ratio": 0.0
+      },
+      "status": "correct",
+      "notes": "Confirmed arm curl motion"
+    },
+    "00000041.mp4": {
+      "video_id": "00000041.mp4",
+      "assigned_label": "squat",
+      "kinematics": {
+        "knee_rom": 27.144355984906785,
+        "elbow_rom": 20.495020247274766,
+        "wrist_above_ratio": 0.4
+      },
+      "status": "correct",
+      "notes": "Confirmed deep squat excursion"
+    },
+    "00000043.mp4": {
+      "video_id": "00000043.mp4",
+      "assigned_label": "squat",
+      "kinematics": {
+        "knee_rom": 78.46242064662111,
+        "elbow_rom": 15.869013732262346,
+        "wrist_above_ratio": 0.171875
+      },
+      "status": "correct",
+      "notes": "Confirmed deep squat excursion"
+    },
+    "00000047.mp4": {
+      "video_id": "00000047.mp4",
+      "assigned_label": "squat",
+      "kinematics": {
+        "knee_rom": 22.30896427985759,
+        "elbow_rom": 37.0662432915572,
+        "wrist_above_ratio": 1.0
+      },
+      "status": "correct",
+      "notes": "Confirmed deep squat excursion"
+    },
+    "00000051.mp4": {
+      "video_id": "00000051.mp4",
+      "assigned_label": "squat",
+      "kinematics": {
+        "knee_rom": 44.725678444386716,
+        "elbow_rom": 20.539037127887667,
+        "wrist_above_ratio": 0.013513513513513514
+      },
+      "status": "correct",
+      "notes": "Confirmed deep squat excursion"
+    },
+    "00000055.mp4": {
+      "video_id": "00000055.mp4",
+      "assigned_label": "bicep_curl",
+      "kinematics": {
+        "knee_rom": 0.0,
+        "elbow_rom": 100.6308506587843,
+        "wrist_above_ratio": 0.16666666666666666
+      },
+      "status": "correct",
+      "notes": "Confirmed arm curl motion"
+    },
+    "00000063.mp4": {
+      "video_id": "00000063.mp4",
+      "assigned_label": "squat",
+      "kinematics": {
+        "knee_rom": 22.716728648785256,
+        "elbow_rom": 61.45950204018763,
+        "wrist_above_ratio": 0.5555555555555556
+      },
+      "status": "correct",
+      "notes": "Confirmed deep squat excursion"
+    },
+    "00000064.mp4": {
+      "video_id": "00000064.mp4",
+      "assigned_label": "lateral_raise",
+      "kinematics": {
+        "knee_rom": 16.27709782798209,
+        "elbow_rom": 2.310387622145811,
+        "wrist_above_ratio": 0.0
+      },
+      "status": "ambiguous",
+      "notes": "Borderline threshold: knee_rom 16.3\u00b0 near 20.0\u00b0 squat threshold"
+    },
+    "00000082.mp4": {
+      "video_id": "00000082.mp4",
+      "assigned_label": "lateral_raise",
+      "kinematics": {
+        "knee_rom": 16.558440088337377,
+        "elbow_rom": 6.422609507668568,
+        "wrist_above_ratio": 0.0
+      },
+      "status": "ambiguous",
+      "notes": "Borderline threshold: knee_rom 16.6\u00b0 near 20.0\u00b0 squat threshold"
+    },
+    "00000084.mp4": {
+      "video_id": "00000084.mp4",
+      "assigned_label": "squat",
+      "kinematics": {
+        "knee_rom": 20.24579377636556,
+        "elbow_rom": 18.561279453223875,
+        "wrist_above_ratio": 1.0
+      },
+      "status": "correct",
+      "notes": "Confirmed deep squat excursion"
+    },
+    "00000085.mp4": {
+      "video_id": "00000085.mp4",
+      "assigned_label": "squat",
+      "kinematics": {
+        "knee_rom": 26.120508102968387,
+        "elbow_rom": 128.50628615701035,
+        "wrist_above_ratio": 0.21428571428571427
+      },
+      "status": "correct",
+      "notes": "Confirmed deep squat excursion"
+    },
+    "00000089.mp4": {
+      "video_id": "00000089.mp4",
+      "assigned_label": "squat",
+      "kinematics": {
+        "knee_rom": 33.13010347782307,
+        "elbow_rom": 29.2009310086718,
+        "wrist_above_ratio": 0.8148148148148148
+      },
+      "status": "correct",
+      "notes": "Confirmed deep squat excursion"
+    },
+    "00000093.mp4": {
+      "video_id": "00000093.mp4",
+      "assigned_label": "squat",
+      "kinematics": {
+        "knee_rom": 76.89163518001001,
+        "elbow_rom": 140.00898350261647,
+        "wrist_above_ratio": 0.23076923076923078
+      },
+      "status": "correct",
+      "notes": "Confirmed deep squat excursion"
+    },
+    "00000096.mp4": {
+      "video_id": "00000096.mp4",
+      "assigned_label": "shoulder_press",
+      "kinematics": {
+        "knee_rom": 12.769486014970767,
+        "elbow_rom": 22.48582206621768,
+        "wrist_above_ratio": 0.38636363636363635
+      },
+      "status": "correct",
+      "notes": "Confirmed shoulder press posture"
+    },
+    "00000111.mp4": {
+      "video_id": "00000111.mp4",
+      "assigned_label": "bicep_curl",
+      "kinematics": {
+        "knee_rom": 7.466114197267501,
+        "elbow_rom": 27.43909855208446,
+        "wrist_above_ratio": 0.0
+      },
+      "status": "correct",
+      "notes": "Confirmed arm curl motion"
+    },
+    "00000114.mp4": {
+      "video_id": "00000114.mp4",
+      "assigned_label": "lateral_raise",
+      "kinematics": {
+        "knee_rom": 16.500568409979763,
+        "elbow_rom": 19.098420128072462,
+        "wrist_above_ratio": 0.10227272727272728
+      },
+      "status": "ambiguous",
+      "notes": "Borderline threshold: knee_rom 16.5\u00b0 near 20.0\u00b0 squat threshold"
+    },
+    "00000121.mp4": {
+      "video_id": "00000121.mp4",
+      "assigned_label": "shoulder_press",
+      "kinematics": {
+        "knee_rom": 15.731811268815832,
+        "elbow_rom": 91.20555731321488,
+        "wrist_above_ratio": 1.0
+      },
+      "status": "correct",
+      "notes": "Confirmed shoulder press posture"
+    },
+    "00000133.mp4": {
+      "video_id": "00000133.mp4",
+      "assigned_label": "lateral_raise",
+      "kinematics": {
+        "knee_rom": 7.975748826528729,
+        "elbow_rom": 21.093044953658364,
+        "wrist_above_ratio": 0.0
+      },
+      "status": "ambiguous",
+      "notes": "Borderline threshold: elbow_rom 21.1\u00b0 near 25.0\u00b0 curl threshold"
+    },
+    "00000134.mp4": {
+      "video_id": "00000134.mp4",
+      "assigned_label": "bicep_curl",
+      "kinematics": {
+        "knee_rom": 11.345957401528977,
+        "elbow_rom": 25.30204007688002,
+        "wrist_above_ratio": 0.0
+      },
+      "status": "correct",
+      "notes": "Confirmed arm curl motion"
+    },
+    "00000137.mp4": {
+      "video_id": "00000137.mp4",
+      "assigned_label": "bicep_curl",
+      "kinematics": {
+        "knee_rom": 0.0,
+        "elbow_rom": 129.14922396575443,
+        "wrist_above_ratio": 0.16666666666666666
+      },
+      "status": "correct",
+      "notes": "Confirmed arm curl motion"
+    },
+    "00000138.mp4": {
+      "video_id": "00000138.mp4",
+      "assigned_label": "squat",
+      "kinematics": {
+        "knee_rom": 70.9767597332787,
+        "elbow_rom": 22.68371568837253,
+        "wrist_above_ratio": 0.8333333333333334
+      },
+      "status": "correct",
+      "notes": "Confirmed deep squat excursion"
+    },
+    "00000143.mp4": {
+      "video_id": "00000143.mp4",
+      "assigned_label": "squat",
+      "kinematics": {
+        "knee_rom": 45.809483369635444,
+        "elbow_rom": 23.66095638190859,
+        "wrist_above_ratio": 0.0
+      },
+      "status": "correct",
+      "notes": "Confirmed deep squat excursion"
+    },
+    "00000151.mp4": {
+      "video_id": "00000151.mp4",
+      "assigned_label": "squat",
+      "kinematics": {
+        "knee_rom": 21.32986287991355,
+        "elbow_rom": 23.909698501298948,
+        "wrist_above_ratio": 0.9302325581395349
+      },
+      "status": "correct",
+      "notes": "Confirmed deep squat excursion"
+    },
+    "00000152.mp4": {
+      "video_id": "00000152.mp4",
+      "assigned_label": "squat",
+      "kinematics": {
+        "knee_rom": 37.20534772580257,
+        "elbow_rom": 23.291639103342504,
+        "wrist_above_ratio": 0.4318181818181818
+      },
+      "status": "correct",
+      "notes": "Confirmed deep squat excursion"
+    },
+    "00000155.mp4": {
+      "video_id": "00000155.mp4",
+      "assigned_label": "squat",
+      "kinematics": {
+        "knee_rom": 78.78339064776878,
+        "elbow_rom": 26.164825316280968,
+        "wrist_above_ratio": 0.5113636363636364
+      },
+      "status": "correct",
+      "notes": "Confirmed deep squat excursion"
+    },
+    "00000157.mp4": {
+      "video_id": "00000157.mp4",
+      "assigned_label": "squat",
+      "kinematics": {
+        "knee_rom": 22.612037710018697,
+        "elbow_rom": 107.33460808574023,
+        "wrist_above_ratio": 1.0
+      },
+      "status": "correct",
+      "notes": "Confirmed deep squat excursion"
+    },
+    "00000162.mp4": {
+      "video_id": "00000162.mp4",
+      "assigned_label": "lateral_raise",
+      "kinematics": {
+        "knee_rom": 3.2734996263618825,
+        "elbow_rom": 20.284304179756077,
+        "wrist_above_ratio": 0.0
+      },
+      "status": "ambiguous",
+      "notes": "Borderline threshold: elbow_rom 20.3\u00b0 near 25.0\u00b0 curl threshold"
+    },
+    "00000175.mp4": {
+      "video_id": "00000175.mp4",
+      "assigned_label": "lateral_raise",
+      "kinematics": {
+        "knee_rom": 17.3277058019396,
+        "elbow_rom": 17.09427412153576,
+        "wrist_above_ratio": 0.14285714285714285
+      },
+      "status": "ambiguous",
+      "notes": "Borderline threshold: knee_rom 17.3\u00b0 near 20.0\u00b0 squat threshold"
+    },
+    "00000176.mp4": {
+      "video_id": "00000176.mp4",
+      "assigned_label": "lateral_raise",
+      "kinematics": {
+        "knee_rom": 18.576016489540052,
+        "elbow_rom": 24.027745573867804,
+        "wrist_above_ratio": 0.0
+      },
+      "status": "ambiguous",
+      "notes": "Borderline threshold: knee_rom 18.6\u00b0 near 20.0\u00b0 squat threshold, elbow_rom 24.0\u00b0 near 25.0\u00b0 curl threshold"
+    },
+    "00000181.mp4": {
+      "video_id": "00000181.mp4",
+      "assigned_label": "squat",
+      "kinematics": {
+        "knee_rom": 103.44384027367937,
+        "elbow_rom": 82.46434995232065,
+        "wrist_above_ratio": 0.21428571428571427
+      },
+      "status": "correct",
+      "notes": "Confirmed deep squat excursion"
+    },
+    "00000187.mp4": {
+      "video_id": "00000187.mp4",
+      "assigned_label": "shoulder_press",
+      "kinematics": {
+        "knee_rom": 16.385071979924106,
+        "elbow_rom": 37.00231902261066,
+        "wrist_above_ratio": 0.89
+      },
+      "status": "correct",
+      "notes": "Confirmed shoulder press posture"
+    },
+    "00000190.mp4": {
+      "video_id": "00000190.mp4",
+      "assigned_label": "bicep_curl",
+      "kinematics": {
+        "knee_rom": 13.270100938378874,
+        "elbow_rom": 26.360657420838493,
+        "wrist_above_ratio": 0.13636363636363635
+      },
+      "status": "correct",
+      "notes": "Confirmed arm curl motion"
+    },
+    "00000199.mp4": {
+      "video_id": "00000199.mp4",
+      "assigned_label": "bicep_curl",
+      "kinematics": {
+        "knee_rom": 14.112387057476667,
+        "elbow_rom": 25.2812952941093,
+        "wrist_above_ratio": 0.0
+      },
+      "status": "correct",
+      "notes": "Confirmed arm curl motion"
+    },
+    "00000204.mp4": {
+      "video_id": "00000204.mp4",
+      "assigned_label": "squat",
+      "kinematics": {
+        "knee_rom": 22.281330554167766,
+        "elbow_rom": 50.28933414825741,
+        "wrist_above_ratio": 0.9464285714285714
+      },
+      "status": "correct",
+      "notes": "Confirmed deep squat excursion"
+    },
+    "00000222.mp4": {
+      "video_id": "00000222.mp4",
+      "assigned_label": "squat",
+      "kinematics": {
+        "knee_rom": 21.61944444731435,
+        "elbow_rom": 19.490062701497862,
+        "wrist_above_ratio": 0.0
+      },
+      "status": "correct",
+      "notes": "Confirmed deep squat excursion"
+    },
+    "00000225.mp4": {
+      "video_id": "00000225.mp4",
+      "assigned_label": "shoulder_press",
+      "kinematics": {
+        "knee_rom": 0.0,
+        "elbow_rom": 25.340492974157797,
+        "wrist_above_ratio": 0.45161290322580644
+      },
+      "status": "correct",
+      "notes": "Confirmed shoulder press posture"
+    },
+    "00000226.mp4": {
+      "video_id": "00000226.mp4",
+      "assigned_label": "shoulder_press",
+      "kinematics": {
+        "knee_rom": 19.861111173904234,
+        "elbow_rom": 18.438138176486802,
+        "wrist_above_ratio": 1.0
+      },
+      "status": "correct",
+      "notes": "Confirmed shoulder press posture"
+    },
+    "00000228.mp4": {
+      "video_id": "00000228.mp4",
+      "assigned_label": "squat",
+      "kinematics": {
+        "knee_rom": 103.61092819322133,
+        "elbow_rom": 23.57187380919291,
+        "wrist_above_ratio": 0.0
+      },
+      "status": "correct",
+      "notes": "Confirmed deep squat excursion"
+    },
+    "00000237.mp4": {
+      "video_id": "00000237.mp4",
+      "assigned_label": "shoulder_press",
+      "kinematics": {
+        "knee_rom": 14.88518548271081,
+        "elbow_rom": 26.988881872871417,
+        "wrist_above_ratio": 0.7727272727272727
+      },
+      "status": "correct",
+      "notes": "Confirmed shoulder press posture"
+    },
+    "00000243.mp4": {
+      "video_id": "00000243.mp4",
+      "assigned_label": "bicep_curl",
+      "kinematics": {
+        "knee_rom": 16.222029843166638,
+        "elbow_rom": 39.23375420966164,
+        "wrist_above_ratio": 0.0
+      },
+      "status": "correct",
+      "notes": "Confirmed arm curl motion"
+    },
+    "00000250.mp4": {
+      "video_id": "00000250.mp4",
+      "assigned_label": "squat",
+      "kinematics": {
+        "knee_rom": 89.48591861805045,
+        "elbow_rom": 26.537558671943998,
+        "wrist_above_ratio": 0.875
+      },
+      "status": "correct",
+      "notes": "Confirmed deep squat excursion"
+    },
+    "00000252.mp4": {
+      "video_id": "00000252.mp4",
+      "assigned_label": "squat",
+      "kinematics": {
+        "knee_rom": 20.095648288042952,
+        "elbow_rom": 11.340317524917367,
+        "wrist_above_ratio": 0.0
+      },
+      "status": "correct",
+      "notes": "Confirmed deep squat excursion"
+    },
+    "00000255.mp4": {
+      "video_id": "00000255.mp4",
+      "assigned_label": "bicep_curl",
+      "kinematics": {
+        "knee_rom": 19.830217111294957,
+        "elbow_rom": 176.68766726283278,
+        "wrist_above_ratio": 0.030303030303030304
+      },
+      "status": "correct",
+      "notes": "Confirmed arm curl motion"
+    },
+    "00000260.mp4": {
+      "video_id": "00000260.mp4",
+      "assigned_label": "squat",
+      "kinematics": {
+        "knee_rom": 22.947307971517134,
+        "elbow_rom": 49.90293325076807,
+        "wrist_above_ratio": 0.7093023255813954
+      },
+      "status": "correct",
+      "notes": "Confirmed deep squat excursion"
+    },
+    "00000275.mp4": {
+      "video_id": "00000275.mp4",
+      "assigned_label": "squat",
+      "kinematics": {
+        "knee_rom": 22.768559723599544,
+        "elbow_rom": 15.701822792189631,
+        "wrist_above_ratio": 0.2
+      },
+      "status": "correct",
+      "notes": "Confirmed deep squat excursion"
+    },
+    "00000282.mp4": {
+      "video_id": "00000282.mp4",
+      "assigned_label": "squat",
+      "kinematics": {
+        "knee_rom": 87.20780248281345,
+        "elbow_rom": 24.47139321261514,
+        "wrist_above_ratio": 0.0
+      },
+      "status": "correct",
+      "notes": "Confirmed deep squat excursion"
+    },
+    "00000287.mp4": {
+      "video_id": "00000287.mp4",
+      "assigned_label": "lateral_raise",
+      "kinematics": {
+        "knee_rom": 5.6314769631470085,
+        "elbow_rom": 21.10023237322804,
+        "wrist_above_ratio": 0.0
+      },
+      "status": "ambiguous",
+      "notes": "Borderline threshold: elbow_rom 21.1\u00b0 near 25.0\u00b0 curl threshold"
+    },
+    "00000293.mp4": {
+      "video_id": "00000293.mp4",
+      "assigned_label": "squat",
+      "kinematics": {
+        "knee_rom": 90.32129559616784,
+        "elbow_rom": 138.65756845741294,
+        "wrist_above_ratio": 0.17857142857142858
+      },
+      "status": "correct",
+      "notes": "Confirmed deep squat excursion"
+    },
+    "00000295.mp4": {
+      "video_id": "00000295.mp4",
+      "assigned_label": "squat",
+      "kinematics": {
+        "knee_rom": 24.12216349098395,
+        "elbow_rom": 21.463960643059437,
+        "wrist_above_ratio": 0.0
+      },
+      "status": "correct",
+      "notes": "Confirmed deep squat excursion"
+    },
+    "00000299.mp4": {
+      "video_id": "00000299.mp4",
+      "assigned_label": "squat",
+      "kinematics": {
+        "knee_rom": 20.70561830022642,
+        "elbow_rom": 20.171311244668146,
+        "wrist_above_ratio": 0.9090909090909091
+      },
+      "status": "correct",
+      "notes": "Confirmed deep squat excursion"
+    },
+    "00000301.mp4": {
+      "video_id": "00000301.mp4",
+      "assigned_label": "squat",
+      "kinematics": {
+        "knee_rom": 41.75445221205379,
+        "elbow_rom": 21.021012762740384,
+        "wrist_above_ratio": 0.0
+      },
+      "status": "correct",
+      "notes": "Confirmed deep squat excursion"
+    },
+    "00000302.mp4": {
+      "video_id": "00000302.mp4",
+      "assigned_label": "bicep_curl",
+      "kinematics": {
+        "knee_rom": 19.873543321007816,
+        "elbow_rom": 29.704563751397075,
+        "wrist_above_ratio": 0.14772727272727273
+      },
+      "status": "correct",
+      "notes": "Confirmed arm curl motion"
+    },
+    "00000308.mp4": {
+      "video_id": "00000308.mp4",
+      "assigned_label": "lateral_raise",
+      "kinematics": {
+        "knee_rom": 17.389426514302386,
+        "elbow_rom": 18.431674663084465,
+        "wrist_above_ratio": 0.0
+      },
+      "status": "ambiguous",
+      "notes": "Borderline threshold: knee_rom 17.4\u00b0 near 20.0\u00b0 squat threshold"
+    }
+  }
+}
