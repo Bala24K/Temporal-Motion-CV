@@ -13,7 +13,8 @@ import numpy as np
 
 from .skeleton import J
 
-SIDES = ("left", "right", "mean", "max", "min")
+SIDES = ("left", "right", "mean", "max", "min", "visible")
+VISIBLE_MARGIN = 0.15      # "visible": both sides averaged unless one side is clearly better seen
 VALID_JOINT_STEMS = {"shoulder", "elbow", "wrist", "hip", "knee", "ankle"}
 VALID_JOINTS = set(J) | VALID_JOINT_STEMS
 
@@ -41,8 +42,26 @@ def _combine(series: List[np.ndarray], side: str) -> np.ndarray:
 
 def _per_side(arr, spec, fn) -> np.ndarray:
     side = spec.get("side", "mean")
+    if side == "visible":
+        return _visible_side(arr, spec, fn)
     sides = ["left", "right"] if side in ("mean", "max", "min") else [side]
     return _combine([fn(s) for s in sides], side if side in ("max", "min") else "mean")
+
+
+def _visible_side(arr, spec, fn) -> np.ndarray:
+    """Per frame: mean of both sides when both are clearly visible, else the better-visible side. Side-on, the far
+    limb is occluded and its landmarks are guesses; averaging it in (side:"mean") corrupts the signal."""
+    L, R = fn("left"), fn("right")
+    stems = [j for j in spec.get("joints", []) if j not in J]
+    if not stems:
+        return np.nanmean(np.stack([L, R]), 0)
+    vis = {s: np.nanmin(np.stack([arr[:, J[f"{s}_{j}"], 2] for j in stems]), 0) for s in ("left", "right")}
+    vl, vr = np.nan_to_num(vis["left"], nan=0.0), np.nan_to_num(vis["right"], nan=0.0)
+    both = np.abs(vl - vr) < VISIBLE_MARGIN
+    with np.errstate(invalid="ignore"):
+        out = np.where(vl >= vr, L, R)
+        out = np.where(both & np.isfinite(L) & np.isfinite(R), (L + R) / 2, out)
+    return np.where(np.isfinite(out), out, np.where(np.isfinite(L), L, R))
 
 
 def joint_angle(arr, spec):

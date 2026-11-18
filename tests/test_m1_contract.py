@@ -229,7 +229,7 @@ def test_health_reports_ui_build_status(client):
     assert "served" in ui
 
 
-# ---------------------------------------------------------------- known counting defects (fixed in M3)
+# ---------------------------------------------------------------- counting defects found by the audit, fixed in M3
 def _reps(ex, frames, ts):
     s = LiveSession(REG.get(ex))
     for f, t in zip(frames, ts):
@@ -237,7 +237,6 @@ def _reps(ex, frames, ts):
     return s.counter.count
 
 
-@pytest.mark.xfail(strict=True, reason="M3: strict return-to-rest rule misses incomplete re-extension (REP_COUNTING_AUDIT.md)")
 @pytest.mark.parametrize("rest", [150, 140])
 def test_M3_curl_with_incomplete_reextension_counts_every_rep(monkeypatch, rest):
     monkeypatch.setitem(S.EX, "bicep_curl", lambda p, f: dict(elbow_int=S._lerp(rest, 40, p), arm_elev=8, bend=-1, lean=3))
@@ -245,7 +244,6 @@ def test_M3_curl_with_incomplete_reextension_counts_every_rep(monkeypatch, rest)
     assert _reps("bicep_curl", f, t) == 5
 
 
-@pytest.mark.xfail(strict=True, reason="M3: press bottoming out above the textbook 90 deg never completes a rep")
 def test_M3_press_from_110_degrees_counts_every_rep(monkeypatch):
     monkeypatch.setitem(S.EX, "shoulder_press", lambda p, f: dict(elbow_int=S._lerp(110, 172, p), arm_elev=S._lerp(85, 168, p), bend=+1, lean=2))
     f, t = S.synth_sequence("shoulder_press", reps=5)

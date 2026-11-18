@@ -27,13 +27,13 @@
   "difficulty": "beginner",
   "camera": {
     "supported_views": [
-      "front",
+      "45deg",
       "side",
-      "45deg"
+      "front"
     ],
-    "preferred": "front",
+    "preferred": "45deg",
     "full_body": false,
-    "notes": ""
+    "notes": "Best at about 45 degrees. From straight on, the forearm moves toward the camera, so do the range capture first."
   },
   "required_joints": [
     "left_shoulder",
@@ -53,11 +53,21 @@
         "elbow",
         "wrist"
       ],
-      "side": "mean"
+      "side": "visible"
     },
     "rest": 170,
     "peak": 45,
-    "toward_peak_phase": "concentric"
+    "toward_peak_phase": "concentric",
+    "population_range": {
+      "rest": [
+        135,
+        180
+      ],
+      "peak": [
+        25,
+        105
+      ]
+    }
   },
   "form_rules": [
     {
@@ -86,7 +96,7 @@
           "shoulder",
           "elbow"
         ],
-        "side": "mean"
+        "side": "visible"
       },
       "max": 18,
       "severity": "warn",
@@ -120,7 +130,11 @@
       "max": 15,
       "severity": "warn",
       "good": "Arms in sync",
-      "bad": "Arms are uneven"
+      "bad": "Arms are uneven",
+      "views": [
+        "front",
+        "45deg"
+      ]
     }
   ],
   "posture": [
@@ -131,7 +145,7 @@
           "shoulder",
           "elbow"
         ],
-        "side": "mean"
+        "side": "visible"
       },
       "stat": "median",
       "min": null,
@@ -139,5 +153,7 @@
       "scale": 30
     }
   ],
-  "motion_plane": "sagittal"
+  "motion_plane": "sagittal",
+  "version": 2,
+  "laterality": "visible_side"
 }

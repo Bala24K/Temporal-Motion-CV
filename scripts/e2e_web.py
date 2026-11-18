@@ -83,6 +83,21 @@ with sync_playwright() as p:
     print("auto-detect quick set ok (locked on squat)")
     pg.get_by_role("button", name="End set").click(); pg.wait_for_url("**/live/**"); expect(pg.get_by_role("heading", name="Session complete.")).to_be_visible(timeout=15000)
 
+    # --- personal range capture during a set (M3)
+    pg.get_by_role("link", name="Home").click(); pg.wait_for_url(BASE + "/")
+    pg.get_by_role("button", name="Quick set").click(); pg.get_by_role("dialog", name="Live workout").wait_for(timeout=15000)
+    pg.get_by_label("Select exercise").select_option("bicep_curl")
+    pg.get_by_label("Video source").select_option("demo"); pg.get_by_role("button", name="Start", exact=True).click()
+    pg.get_by_role("button", name="Capture my range").click(timeout=15000)
+    pg.wait_for_timeout(8000)                                   # ~3 demo reps
+    pg.get_by_role("button", name="Done").click()
+    expect(pg.get_by_text("Range saved").first).to_be_visible(timeout=10000)
+    expect(pg.get_by_role("button", name="Recapture my range")).to_be_visible()
+    pg.screenshot(path=f"{SHOTS}/w6b_range.png")
+    pg.get_by_role("button", name="End set").click(); expect(pg.get_by_role("heading", name="Session complete.")).to_be_visible(timeout=15000)
+    print("personal range capture ok")
+    pg.get_by_role("link", name="Home").click(); pg.wait_for_url(BASE + "/")
+
     # --- progress
     pg.get_by_role("link", name="Progress").click(); pg.wait_for_url("**/progress/")
     expect(pg.get_by_text("Muscle distribution")).to_be_visible(); pg.get_by_role("tab", name="Month").click()

@@ -61,8 +61,16 @@ def frame_to_array(frame: Frame, min_visibility: float = 0.3) -> np.ndarray:
             out[J[name], :2] = (float(v[0]) * aspect, float(v[1]))
     for mid, (a, b) in (("hip_center", ("left_hip", "right_hip")),
                         ("shoulder_center", ("left_shoulder", "right_shoulder"))):
-        out[J[mid], :2] = (out[J[a], :2] + out[J[b], :2]) / 2
-        out[J[mid], 2] = np.nanmin([out[J[a], 2], out[J[b], 2]]) if not np.isnan(out[J[a], 2] + out[J[b], 2]) else np.nan
+        pa, pb = out[J[a], :2], out[J[b], :2]
+        if np.isfinite(pa).all() and np.isfinite(pb).all():
+            out[J[mid], :2] = (pa + pb) / 2
+            out[J[mid], 2] = min(out[J[a], 2], out[J[b], 2])
+        elif np.isfinite(pa).all() or np.isfinite(pb).all():
+            # side-on the far joint is occluded and the two nearly coincide in the image: use the visible one,
+            # otherwise every hip-centred coordinate (and so every signal) becomes NaN
+            src = a if np.isfinite(pa).all() else b
+            out[J[mid], :2] = out[J[src], :2]
+            out[J[mid], 2] = out[J[src], 2]
     return out
 
 

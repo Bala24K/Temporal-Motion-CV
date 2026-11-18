@@ -7,7 +7,8 @@ from sqlalchemy.orm import Session, selectinload
 
 from motion_engine.contract import frames_error
 from motion_engine.personalization import Baseline
-from motion_engine.session import analyze_sequence
+from motion_engine.personal_range import RangeCaptureError, capture_range
+from motion_engine.session import analyze_sequence, rep_signal
 from motion_engine.skeleton import BodyProfile
 
 from ..config import settings
@@ -251,3 +252,36 @@ def analyze(body: AnalyzeBody, u: User = Depends(current_user), db: Session = De
                                                                for r in summary["reps_detail"]]))
         store_baseline(db, u.id, d.id, baseline)
     return summary
+
+
+# ---------------------------------------------------------------- personal range
+class RangeBody(BaseModel):
+    exercise: str
+    frames: List[Dict[str, List[float]]] = Field(min_length=30, max_length=1800)
+
+
+@router.post("/profile/range")
+def capture_personal_range(body: RangeBody, u: User = Depends(current_user), db: Session = Depends(get_db)):
+    """Capture the user's own rest/turnaround for an exercise from 2-3 slow full-range reps (landmark frames)."""
+    d, _ = state.registry.resolve(body.exercise)
+    if not d:
+        raise HTTPException(422, "Unknown exercise")
+    err = frames_error(body.frames)
+    if err:
+        raise HTTPException(422, err)
+    prof, baseline = load_context(db, u.id, d.id)
+    try:
+        rng = capture_range(d, rep_signal(d, body.frames, prof))
+    except RangeCaptureError as e:
+        raise HTTPException(422, str(e))
+    baseline.range = rng
+    store_baseline(db, u.id, d.id, baseline)
+    return {"exercise": d.id, **rng}
+
+
+@router.delete("/profile/range/{exercise_id}", status_code=204)
+def clear_personal_range(exercise_id: str, u: User = Depends(current_user), db: Session = Depends(get_db)):
+    prof, baseline = load_context(db, u.id, exercise_id)
+    if baseline.range:
+        baseline.range = None
+        store_baseline(db, u.id, exercise_id, baseline)

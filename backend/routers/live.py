@@ -19,6 +19,7 @@ from motion_engine.runtime import LatestSlot
 from motion_engine.session import LiveSession
 from motion_engine.skeleton import IMAGE_KEY
 from motion_engine.calibration import check_setup
+from motion_engine.personal_range import RangeCaptureError
 from motion_engine.synthetic import EX, standing_stage, synth_sequence
 
 from ..deps import user_from_token
@@ -143,6 +144,9 @@ async def live(ws: WebSocket, exercise: str = "auto", target_reps: int = 10, ses
                     defn, sess = None, None
                     await ws.send_json({"type": "exercise_selected", "exercise": "auto", "exercise_name": "Auto-detect"})
                 continue
+            if kind == "range_capture":
+                await _range_capture(ws, sess, uid, msg.get("action"))
+                continue
             if kind != "frame":
                 continue
             t0 = time.perf_counter()
@@ -202,6 +206,7 @@ async def _finish(ws, sess, uid, session_id, weight, ctx, reason="end_set"):
     if sess is None:
         await ws.send_json({"type": "set_saved", "saved": False, "reason": reason, "message": "No exercise was detected."})
         return
+    sess.finish()                       # close a last rep that came down but never fully returned
     summary = sess.summary()
     saved = None
     if session_id is not None and (summary["reps"] or summary["partial_reps"]):
@@ -219,3 +224,30 @@ async def _finish(ws, sess, uid, session_id, weight, ctx, reason="end_set"):
             store_baseline(db, uid, sess.defn.id, sess.baseline)
             saved = rec.id
     await ws.send_json({"type": "set_saved", "saved": saved is not None, "set_id": saved, "summary": summary, "reason": reason})
+
+
+RANGE_INSTRUCTION = "Do 2-3 slow reps through your full comfortable range, then press Done."
+
+
+async def _range_capture(ws, sess, uid, action):
+    """Personal range capture inside a live set: start -> (frames) -> finish | cancel. The range is applied to the
+    running counter immediately and stored for future sets of this exercise."""
+    if sess is None:
+        await ws.send_json({"type": "range_captured", "ok": False, "message": "Choose an exercise first."})
+        return
+    if action == "start":
+        sess.start_range_capture()
+        await ws.send_json({"type": "range_capture", "status": "started", "instruction": RANGE_INSTRUCTION})
+    elif action == "cancel":
+        sess.cancel_range_capture()
+        await ws.send_json({"type": "range_capture", "status": "cancelled"})
+    elif action == "finish":
+        try:
+            rng = sess.finish_range_capture()
+        except RangeCaptureError as e:
+            await ws.send_json({"type": "range_captured", "ok": False, "message": str(e)})
+            return
+        with state.SessionLocal() as db:
+            store_baseline(db, uid, sess.defn.id, sess.baseline)
+        state.metrics.inc("range_captured_total")
+        await ws.send_json({"type": "range_captured", "ok": True, **rng})

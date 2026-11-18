@@ -9,8 +9,10 @@ export interface Workout { id: number; name: string; notes: string; items: Worko
 export interface SetOut { id: number; exercise_name: string; set_number: number; reps: number; partial_reps: number; weight_kg: number; avg_form_score: number | null; source: string }
 export interface SessionOut { id: number; name: string; duration_minutes: number; sets: SetOut[]; total_reps: number; volume_kg: number; avg_form_score: number | null }
 export interface Feedback { status: "good" | "warning" | "info"; message: string; rule: string }
-export interface LiveState { type: "state"; exercise: string; reps: number; target_reps: number | null; partial_reps: number; phase: string; progress: number;
-  quality: { ok: boolean; message: string | null }; feedback: Feedback[]; set_complete: boolean }
+export interface LiveState { type: "state"; exercise: string; reps: number; target_reps: number | null; partial_reps: number; abandoned_reps: number; phase: string; progress: number;
+  quality: { ok: boolean; message: string | null }; feedback: Feedback[]; set_complete: boolean;
+  tracking: "ok" | "degraded" | "lost"; view: "front" | "side" | "45deg" | null; view_ok: boolean; view_hint: string | null;
+  personal_range: { rest: number; peak: number } | null; range_capture: boolean }
 export interface Recognition { type: "recognition"; status: string; action: "analyze" | "confirm" | "fallback" | "wait"; confidence: number; message: string; top: { exercise: string; members: string[] } | null }
 export interface Progress { range: string; workouts: number; sets: number; reps: number; volume_kg: number; active_minutes: number; avg_form_score: number | null; avg_rom: number | null;
   days_trained: number; weekly_target: number; consistency: number; muscle_sets: Record<string, number>; muscle_share: Record<string, number>;

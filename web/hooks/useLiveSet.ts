@@ -24,6 +24,7 @@ export function useLiveSet() {
   const [notice, setNotice] = useState<string | null>(null);
   const [open, setOpen] = useState(false);
   const [lost, setLost] = useState(false);
+  const [rangeMsg, setRangeMsg] = useState<{ ok: boolean; text: string } | null>(null);
 
   const flash = (msg: string, ms = 3000) => { setNotice(msg); setTimeout(() => setNotice((n) => (n === msg ? null : n)), ms); };
 
@@ -48,7 +49,12 @@ export function useLiveSet() {
         setRec(null);
         flash(`Switched to ${m.exercise_name || m.exercise}`, 2500);
       }
-      else if (m.type === "setup") flash(m.message, 6000);       // camera/distance differs from calibration, or not calibrated
+      else if (m.type === "setup") flash(m.message, 6000);
+      else if (m.type === "range_capture") setRangeMsg(m.status === "started" ? { ok: true, text: m.instruction } : null);
+      else if (m.type === "range_captured") {
+        setRangeMsg(m.ok ? { ok: true, text: `Range saved: ${Math.round(m.rest)}° to ${Math.round(m.peak)}°${m.clamped ? " (limited to a safe range)" : ""}` } : { ok: false, text: m.message });
+        setTimeout(() => setRangeMsg((r) => (r && r.text.startsWith("Range saved") ? null : r)), 5000);
+      }       // camera/distance differs from calibration, or not calibrated
       else if (m.type === "target_reached") setNotice("Target reached - end the set when you're ready.");
       else if (m.type === "unsupported" || m.type === "error") setNotice(m.message);
       else if (m.type === "set_saved") {
@@ -81,6 +87,11 @@ export function useLiveSet() {
     setTimeout(() => resolve(null), 5000);
   }), []);
 
+  /** Personal range capture: start, do 2-3 slow full reps, finish (or cancel). Applied immediately and remembered. */
+  const sendRange = useCallback((action: "start" | "finish" | "cancel") => {
+    if (ws.current?.readyState === 1) ws.current.send(JSON.stringify({ type: "range_capture", action }));
+  }, []);
+
   /** Landmark recorder (no video): start/stop, then download as JSON Lines for the replay harness. */
   const startRecording = useCallback(() => { recording.current = []; }, []);
   const stopRecording = useCallback((meta: Record<string, unknown> = {}) => {
@@ -96,5 +107,5 @@ export function useLiveSet() {
 
   const close = useCallback(() => { ending.current = true; try { ws.current?.close(); } catch { /* already closed */ } ws.current = null; }, []);
   useEffect(() => close, [close]);
-  return { state, rec, notice, open, lost, connect, sendFrame, sendStats, sendExercise, endSet, close, startRecording, stopRecording };
+  return { state, rec, notice, open, lost, rangeMsg, connect, sendFrame, sendStats, sendExercise, sendRange, endSet, close, startRecording, stopRecording };
 }

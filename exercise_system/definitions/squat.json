@@ -31,12 +31,11 @@
   "camera": {
     "supported_views": [
       "side",
-      "45deg",
-      "front"
+      "45deg"
     ],
     "preferred": "side",
     "full_body": true,
-    "notes": ""
+    "notes": "Knee bend is foreshortened from the front, so squats are counted side-on (45 degrees also works)."
   },
   "required_joints": [
     "left_hip",
@@ -54,11 +53,21 @@
         "knee",
         "ankle"
       ],
-      "side": "mean"
+      "side": "visible"
     },
     "rest": 172,
     "peak": 85,
-    "toward_peak_phase": "eccentric"
+    "toward_peak_phase": "eccentric",
+    "population_range": {
+      "rest": [
+        155,
+        180
+      ],
+      "peak": [
+        65,
+        115
+      ]
+    }
   },
   "form_rules": [
     {
@@ -89,23 +98,6 @@
       "severity": "warn",
       "good": "Chest stays up",
       "bad": "Torso is leaning too far forward"
-    },
-    {
-      "id": "knee_sync",
-      "type": "symmetry",
-      "signal": {
-        "primitive": "joint_angle",
-        "joints": [
-          "hip",
-          "knee",
-          "ankle"
-        ],
-        "side": "mean"
-      },
-      "max": 12,
-      "severity": "warn",
-      "good": "Knees tracking evenly",
-      "bad": "Knees are uneven"
     }
   ],
   "posture": [
@@ -125,5 +117,7 @@
       "scale": 30
     }
   ],
-  "motion_plane": "sagittal"
+  "motion_plane": "sagittal",
+  "version": 2,
+  "laterality": "visible_side"
 }

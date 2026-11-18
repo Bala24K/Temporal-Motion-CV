@@ -14,6 +14,7 @@ class Baseline:
         d = d or {}
         self.n = int(d.get("n", 0))
         self.mean = {k: float(d.get("mean", {}).get(k, 0.0)) for k in self.FIELDS}
+        self.range: Optional[Dict] = d.get("range")       # personal rest/peak (motion_engine/personal_range.py)
 
     def update(self, rep: Dict, half_life: int = 30) -> None:
         if not rep.get("counted", True):
@@ -27,7 +28,10 @@ class Baseline:
         self.n += 1
 
     def to_dict(self) -> Dict:
-        return {"n": self.n, "mean": {k: round(v, 4) for k, v in self.mean.items()}}
+        out = {"n": self.n, "mean": {k: round(v, 4) for k, v in self.mean.items()}}
+        if self.range:
+            out["range"] = self.range
+        return out
 
     def as_reference(self) -> Dict:
         return {"n": self.n, **self.mean}

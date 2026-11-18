@@ -119,12 +119,28 @@ function SetScreen({ sessionId, cur, onFinished, onLeave }: { sessionId: number;
           <canvas ref={canvas} className="absolute inset-0 h-full w-full" aria-label="Pose overlay" />
         </div>
         {!ai && <div className="absolute inset-x-4 top-4"><Notice><b>Manual tracking.</b> Reliable AI analysis isn&apos;t available for this exercise yet — log your set below.</Notice></div>}
-        {s && !s.quality.ok && <div className="absolute left-1/2 top-3 -translate-x-1/2 rounded-full bg-warn px-4 py-1.5 text-sm font-semibold text-black" role="alert">{s.quality.message}</div>}
+        {s && (!s.quality.ok || s.tracking !== "ok") && s.quality.message && <div className="absolute left-1/2 top-3 -translate-x-1/2 rounded-full bg-warn px-4 py-1.5 text-sm font-semibold text-black" role="alert">{s.quality.message}</div>}
+        {s && s.tracking === "degraded" && s.quality.ok && <div className="absolute left-1/2 top-3 -translate-x-1/2 rounded-full bg-white/15 px-4 py-1.5 text-sm font-semibold backdrop-blur" role="status">Tracking weak - keep your whole body in view</div>}
+        {s && !s.view_ok && s.view_hint && <div className="absolute inset-x-4 top-14 mx-auto w-fit max-w-full rounded-2xl bg-black/60 px-4 py-2 text-center text-sm backdrop-blur" role="status">{s.view_hint}</div>}
+        {ai && running && s && (
+          <div className="absolute right-4 top-4 flex flex-col items-end gap-2 text-sm">
+            {s.range_capture ? (
+              <div className="flex max-w-[16rem] flex-col items-end gap-2 rounded-2xl bg-black/60 p-3 text-right backdrop-blur" role="status">
+                <span>{live.rangeMsg?.text ?? "Do 2-3 slow reps through your full comfortable range."}</span>
+                <span className="flex gap-2"><Button size="sm" variant="ghost" className="text-[#eef3f8]" onClick={() => live.sendRange("cancel")}>Cancel</Button>
+                  <Button size="sm" variant="primary" onClick={() => live.sendRange("finish")}>Done</Button></span>
+              </div>
+            ) : (
+              <Button size="sm" variant={s.personal_range ? "ghost" : "primary"} className={s.personal_range ? "text-[#93a3b2]" : ""} onClick={() => live.sendRange("start")}
+                title="Calibrate counting to your own range of motion for this exercise">{s.personal_range ? "Recapture my range" : "Capture my range"}</Button>
+            )}
+            {live.rangeMsg && !s.range_capture && <span className={`max-w-[16rem] rounded-full px-3 py-1 text-right ${live.rangeMsg.ok ? "bg-good text-black" : "bg-warn text-black"}`} role="status">{live.rangeMsg.text}</span>}
+          </div>)}
         {ai && (
           <div className="pointer-events-none absolute left-[clamp(4rem,17%,14rem)] top-1/2 -translate-x-1/2 -translate-y-1/2 text-center max-md:left-1/2 max-md:top-[26%]">
             <motion.div key={s?.reps ?? 0} initial={{ scale: 1.12 }} animate={{ scale: 1 }} transition={{ type: "spring", stiffness: 400, damping: 18 }}
               className="live-count font-display font-extrabold drop-shadow-[0_4px_40px_#000a]" data-testid="rep-count">{s?.reps ?? 0}</motion.div>
-            <div className="text-[#93a3b2]">of {item.reps}</div>
+            <div className="text-[#93a3b2]">of {item.reps}{s?.partial_reps ? ` · ${s.partial_reps} partial` : ""}</div>
           </div>)}
         <ProgressRing value={s?.progress ?? 0} />
         <div className="absolute bottom-4 left-4 flex max-w-[calc(100%-7rem)] flex-col items-start gap-2" aria-live="polite">

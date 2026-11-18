@@ -26,6 +26,7 @@ class Evidence:
     measured: Optional[float]
     threshold: Optional[float]
     message: str
+    evaluated: bool = True
 
     def to_dict(self):
         d = asdict(self)
@@ -47,11 +48,22 @@ def signal_table(defn) -> Dict[str, dict]:
     return t
 
 
-def evaluate_rep(defn, rep: RepEvent) -> List[Evidence]:
+ROBUST_HI, ROBUST_LO = 95, 5        # percentiles: one mis-tracked frame must not fail (or pass) a rule
+
+
+def _evaluable(s, need: float) -> bool:
+    return s is not None and len(s) > 0 and np.isfinite(s).mean() >= need
+
+
+def evaluate_rep(defn, rep: RepEvent, view: Optional[str] = None) -> List[Evidence]:
+    """Evidence per rule. A rule whose signal was not visible for enough of the rep, or that is not valid in the
+    current camera view, reports evaluated=False (excluded from the score) instead of silently passing."""
     out: List[Evidence] = []
     for r in defn.form_rules:
-        ok, measured, thr = True, None, None
-        if r.type == "rom":
+        ok, measured, thr, evaluated, note = True, None, None, True, None
+        if r.views and view and view not in r.views:
+            evaluated, note = False, f"Not checked from a {view} view."
+        elif r.type == "rom":
             measured = rep.peak_progress
             lo_ok = r.min is None or measured >= r.min
             hi_ok = r.max is None or measured <= r.max
@@ -62,32 +74,37 @@ def evaluate_rep(defn, rep: RepEvent) -> List[Evidence]:
             if ok and r.min_phase_seconds is not None:
                 measured = min(rep.toward_peak_seconds, rep.away_from_peak_seconds)
                 thr, ok = r.min_phase_seconds, measured >= r.min_phase_seconds
-        elif r.type == "stability":
+        elif r.type in ("stability", "limit"):
             s = rep.signals.get(f"r:{r.id}")
-            if s is not None and np.isfinite(s).any():
-                measured, thr = float(np.nanmax(s) - np.nanmin(s)), r.max
+            if not _evaluable(s, r.min_evaluable):
+                evaluated, note = False, "Not checked - the joints for this rule weren't clearly visible."
+            elif r.type == "stability":
+                measured, thr = float(np.nanpercentile(s, ROBUST_HI) - np.nanpercentile(s, ROBUST_LO)), r.max
                 ok = r.max is None or measured <= r.max
-        elif r.type == "limit":
-            s = rep.signals.get(f"r:{r.id}")
-            if s is not None and np.isfinite(s).any():
+            else:
                 if r.max is not None:
-                    measured, thr = float(np.nanmax(s)), r.max
+                    measured, thr = float(np.nanpercentile(s, ROBUST_HI)), r.max
                     ok = measured <= r.max
                 if ok and r.min is not None:
-                    measured, thr = float(np.nanmin(s)), r.min
+                    measured, thr = float(np.nanpercentile(s, ROBUST_LO)), r.min
                     ok = measured >= r.min
         elif r.type == "symmetry":
             a, b = rep.signals.get(f"r:{r.id}:L"), rep.signals.get(f"r:{r.id}:R")
-            if a is not None and b is not None and np.isfinite(a).any() and np.isfinite(b).any():
+            if not (_evaluable(a, r.min_evaluable) and _evaluable(b, r.min_evaluable)):
+                evaluated, note = False, "Not checked - both sides need to be visible."
+            else:
                 measured, thr = float(np.nanmean(np.abs(a - b))), r.max
                 ok = r.max is None or measured <= r.max
-        out.append(Evidence(r.id, r.type, bool(ok), r.severity, measured, thr, (r.good if ok else r.bad) or r.id))
+        if not evaluated:
+            measured, thr, ok = None, None, True
+        out.append(Evidence(r.id, r.type, bool(ok), r.severity, measured, thr,
+                            note if not evaluated else ((r.good if ok else r.bad) or r.id), evaluated))
     return out
 
 
 def form_score(evidence: List[Evidence]) -> Optional[float]:
     """Weighted share of rules passed, 0..100. None if nothing was evaluable."""
-    ev = [e for e in evidence if e.measured is not None]
+    ev = [e for e in evidence if e.evaluated and e.measured is not None]
     if not ev:
         return None
     w = sum(SEV_WEIGHT[e.severity] for e in ev)

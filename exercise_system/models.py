@@ -8,13 +8,24 @@ from pydantic import BaseModel, Field
 
 class RepDefinition(BaseModel):
     signal: dict                         # primitive spec driving rep counting
-    rest: float                          # signal value at the start/end of a rep
-    peak: float                          # signal value at the turnaround
+    rest: float                          # population default: signal value at the start/end of a rep
+    peak: float                          # population default: signal value at the turnaround
     toward_peak_phase: Literal["concentric", "eccentric"] = "concentric"
     count_progress: float = 0.55         # min fraction of rest->peak to count a rep
     partial_progress: float = 0.30       # above this (but < count) => flagged partial rep
     min_rep_seconds: float = 0.3
-    max_rep_seconds: float = 12.0
+    max_rep_seconds: float = 20.0        # an open rep older than this is abandoned (and reported)
+    # --- counter v2 (time-based, so behaviour does not depend on frame rate) ---
+    start_progress: float = 0.25         # progress that starts a rep ...
+    start_dwell: float = 0.10            # ... held this long (s)
+    complete_progress: float = 0.35      # relaxed return: a rep completes below this ... (was 0.15 = near-full return)
+    complete_dwell: float = 0.15         # ... held this long (s)
+    reversal: float = 0.25               # or: dropped this far from its peak and started the next rep
+    settle_drop: float = 0.45            # or: dropped this far from its peak and stayed still ...
+    settle_seconds: float = 0.4          # ... this long (user pauses part-way down between reps)
+    smoothing_tau: float = 0.08          # EMA time constant (s)
+    # Bounds a personal range capture may move rest/peak to. Default: +-25% of |peak - rest| around each.
+    population_range: Optional[Dict[str, List[float]]] = None
 
 
 class FormRule(BaseModel):
@@ -28,6 +39,8 @@ class FormRule(BaseModel):
     min_phase_seconds: Optional[float] = None   # min duration of each half of the rep
     good: str = ""
     bad: str = ""
+    views: Optional[List[Literal["front", "side", "45deg"]]] = None   # evaluate only in these camera views
+    min_evaluable: float = 0.8           # share of rep frames with a finite signal required to judge the rule
 
 
 class Posture(BaseModel):
@@ -66,6 +79,9 @@ class ExerciseDefinition(BaseModel):
     form_rules: List[FormRule] = Field(default_factory=list)
     posture: List[Posture] = Field(default_factory=list)
     motion_plane: Literal["frontal", "sagittal", "mixed"] = "mixed"   # frontal => yaw compensation applies
+    # visible_side: side-on views hide the far limbs, so quality gating and side:"visible" signals use the
+    # better-visible side (both sides when both are clearly visible). bilateral: both sides always required.
+    laterality: Literal["bilateral", "visible_side"] = "bilateral"
     metric: Literal["reps", "duration"] = "reps"
     confidence_threshold: float = 0.6
 

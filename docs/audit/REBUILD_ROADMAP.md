@@ -136,6 +136,23 @@ M1 Trustworthy input ──► M2 Calibration v2 ──► M3 Counter v2 (squat,
 
 **Regression tests:** synthetic scenario suite; golden-set replay gate in CI.
 
+**Status (2026-11-18): software implemented; the golden-set targets are still open.** Tests: `RT/tests/test_m3_counter.py` (29 tests). The three audit regressions that were strict `xfail` in M1 now pass as ordinary tests. Browser E2E passes, including personal range capture.
+
+| Item | State | Notes |
+| --- | --- | --- |
+| Counter v2 | Done | `motion_engine/repetition.py`: time-based EMA and dwell. A rep completes on a relaxed return (< 0.35), a reversal into the next rep, or a settle (paused part-way down). An open rep is closed at end of set (`flush`). Timeouts are counted as `abandoned`, never silently dropped |
+| Incomplete re-extension | Done | Curl back to 150/140/125 deg and press from 110 deg: 5/5 (were 1/5, 0/5, 0/5) |
+| Frame-rate independence | Done | Same counts at 15, 24, 30 and 60 fps for squat, curl, press and raise |
+| Tracking states | Done | ok -> degraded (rep kept open) -> lost after 3 s (rep abandoned, smoothing re-anchored); shown in the UI |
+| Personal range | Done | `motion_engine/personal_range.py`: 2+ full cycles, robust extremes, clamped to `population_range` (default ±25%), keyed to the definition version. Captured live ("Capture my range") or via `POST /api/profile/range`; stored in `baselines` and applied to later sets. A front-view curl reaching only ~110 deg: 0/5 without a range, 5/5 with one |
+| Visible side | Done | `laterality: visible_side` plus `side: "visible"` primitive; side-on quality gating needs only one clear side; midpoints fall back to the visible joint. A side-on squat with the far leg hidden, or wrongly guessed, still counts 5/5 |
+| Definitions v2 | Done (squat, bicep/hammer curl) | Squat: side/45deg only, knee-symmetry rule removed (not judgeable side-on). Curl: 45deg preferred; symmetry only in front/45deg views |
+| Form rules | Done | P95/P5 instead of max/min; `evaluated: false` ("not checked") when the rule's joints weren't visible for 80% of the rep or the view is wrong; excluded from the score |
+| View guidance | Done, advisory | Per-set view estimate (3D yaw, else shoulder ratio). Shows a hint such as "turn side-on" but does not block counting until the classifier is tuned on recordings |
+| One Euro landmark filter | **Not done** | The time-based EMA on the rep signal covers counting; landmark-level filtering waits for recordings to tune it |
+| Golden-set targets (MAE <= 0.3 reps/set, >= 90% exact sets, false reps <= 2%, missed reps <= 3%) | **Not measured** | Needs human-counted recordings (`python -m ml.replay` is the harness). Counter thresholds (start/complete/reversal/settle, tau, lost_after, range clamp, MIN_AMPLITUDE 0.35) are provisional until then |
+| Performance | Measured | `LiveSession.push` p50 0.41 ms / p95 1.2 ms (synthetic, this machine), up from 0.18 ms; within the 5 ms budget |
+
 ---
 
 ## M4 — Session protocol and product wiring
