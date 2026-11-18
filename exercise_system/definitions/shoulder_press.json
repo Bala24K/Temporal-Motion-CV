@@ -1,0 +1,130 @@
+{
+  "id": "shoulder_press",
+  "name": "Shoulder Press",
+  "aliases": [
+    "overhead press",
+    "dumbbell shoulder press",
+    "military press",
+    "db press"
+  ],
+  "family": "overhead_press",
+  "movement_patterns": [
+    "press",
+    "push"
+  ],
+  "target_muscles": [
+    "deltoids",
+    "triceps"
+  ],
+  "secondary_muscles": [
+    "upper chest",
+    "core"
+  ],
+  "primary_joints": [
+    "shoulder",
+    "elbow"
+  ],
+  "equipment": [
+    "dumbbell",
+    "barbell"
+  ],
+  "body_position": "standing",
+  "difficulty": "intermediate",
+  "camera": {
+    "supported_views": [
+      "front"
+    ],
+    "preferred": "front",
+    "full_body": false,
+    "notes": ""
+  },
+  "required_joints": [
+    "left_shoulder",
+    "right_shoulder",
+    "left_elbow",
+    "right_elbow",
+    "left_wrist",
+    "right_wrist",
+    "left_hip",
+    "right_hip"
+  ],
+  "rep": {
+    "signal": {
+      "primitive": "joint_angle",
+      "joints": [
+        "shoulder",
+        "elbow",
+        "wrist"
+      ],
+      "side": "mean"
+    },
+    "rest": 90,
+    "peak": 172,
+    "toward_peak_phase": "concentric"
+  },
+  "form_rules": [
+    {
+      "id": "rom",
+      "type": "rom",
+      "min": 0.85,
+      "max": null,
+      "severity": "warn",
+      "good": "Full lockout",
+      "bad": "Press all the way up"
+    },
+    {
+      "id": "tempo",
+      "type": "tempo",
+      "min_phase_seconds": 0.5,
+      "severity": "warn",
+      "good": "Controlled tempo",
+      "bad": "Slow down - control both halves of the rep"
+    },
+    {
+      "id": "no_lean_back",
+      "type": "limit",
+      "signal": {
+        "primitive": "trunk_lean"
+      },
+      "max": 12,
+      "min": null,
+      "severity": "warn",
+      "good": "Torso stays upright",
+      "bad": "Avoid leaning back"
+    },
+    {
+      "id": "arm_sync",
+      "type": "symmetry",
+      "signal": {
+        "primitive": "joint_angle",
+        "joints": [
+          "shoulder",
+          "elbow",
+          "wrist"
+        ],
+        "side": "mean"
+      },
+      "max": 15,
+      "severity": "warn",
+      "good": "Arms press evenly",
+      "bad": "Arms are uneven"
+    }
+  ],
+  "posture": [
+    {
+      "signal": {
+        "primitive": "segment_vertical_angle",
+        "joints": [
+          "shoulder",
+          "elbow"
+        ],
+        "side": "mean"
+      },
+      "stat": "median",
+      "min": 60,
+      "max": 150,
+      "scale": 30
+    }
+  ],
+  "motion_plane": "frontal"
+}

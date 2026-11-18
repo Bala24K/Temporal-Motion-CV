@@ -1,0 +1,58 @@
+{
+  "sequence": [
+    {
+      "landmarks": {
+        "nose": {"x": 0.50, "y": 0.20, "z": 0.0, "visibility": 0.99},
+        "left_shoulder": {"x": 0.40, "y": 0.32, "z": 0.0, "visibility": 0.99},
+        "right_shoulder": {"x": 0.60, "y": 0.32, "z": 0.0, "visibility": 0.99},
+        "left_elbow": {"x": 0.36, "y": 0.48, "z": 0.0, "visibility": 0.98},
+        "right_elbow": {"x": 0.64, "y": 0.48, "z": 0.0, "visibility": 0.98},
+        "left_wrist": {"x": 0.34, "y": 0.65, "z": 0.0, "visibility": 0.98},
+        "right_wrist": {"x": 0.66, "y": 0.65, "z": 0.0, "visibility": 0.98},
+        "left_hip": {"x": 0.45, "y": 0.65, "z": 0.0, "visibility": 0.99},
+        "right_hip": {"x": 0.55, "y": 0.65, "z": 0.0, "visibility": 0.99},
+        "left_knee": {"x": 0.45, "y": 0.82, "z": 0.0, "visibility": 0.99},
+        "right_knee": {"x": 0.55, "y": 0.82, "z": 0.0, "visibility": 0.99},
+        "left_ankle": {"x": 0.45, "y": 0.96, "z": 0.0, "visibility": 0.99},
+        "right_ankle": {"x": 0.55, "y": 0.96, "z": 0.0, "visibility": 0.99}
+      },
+      "timestamp": 0.0
+    },
+    {
+      "landmarks": {
+        "nose": {"x": 0.50, "y": 0.20, "z": 0.0, "visibility": 0.99},
+        "left_shoulder": {"x": 0.40, "y": 0.32, "z": 0.0, "visibility": 0.99},
+        "right_shoulder": {"x": 0.60, "y": 0.32, "z": 0.0, "visibility": 0.99},
+        "left_elbow": {"x": 0.36, "y": 0.49, "z": 0.0, "visibility": 0.98},
+        "right_elbow": {"x": 0.64, "y": 0.49, "z": 0.0, "visibility": 0.98},
+        "left_wrist": {"x": 0.34, "y": 0.55, "z": -0.02, "visibility": 0.98},
+        "right_wrist": {"x": 0.66, "y": 0.55, "z": -0.02, "visibility": 0.98},
+        "left_hip": {"x": 0.45, "y": 0.65, "z": 0.0, "visibility": 0.99},
+        "right_hip": {"x": 0.55, "y": 0.65, "z": 0.0, "visibility": 0.99},
+        "left_knee": {"x": 0.45, "y": 0.82, "z": 0.0, "visibility": 0.99},
+        "right_knee": {"x": 0.55, "y": 0.82, "z": 0.0, "visibility": 0.99},
+        "left_ankle": {"x": 0.45, "y": 0.96, "z": 0.0, "visibility": 0.99},
+        "right_ankle": {"x": 0.55, "y": 0.96, "z": 0.0, "visibility": 0.99}
+      },
+      "timestamp": 0.033
+    },
+    {
+      "landmarks": {
+        "nose": {"x": 0.50, "y": 0.20, "z": 0.0, "visibility": 0.99},
+        "left_shoulder": {"x": 0.40, "y": 0.32, "z": 0.0, "visibility": 0.99},
+        "right_shoulder": {"x": 0.60, "y": 0.32, "z": 0.0, "visibility": 0.99},
+        "left_elbow": {"x": 0.36, "y": 0.50, "z": 0.0, "visibility": 0.98},
+        "right_elbow": {"x": 0.64, "y": 0.50, "z": 0.0, "visibility": 0.98},
+        "left_wrist": {"x": 0.34, "y": 0.40, "z": -0.05, "visibility": 0.98},
+        "right_wrist": {"x": 0.66, "y": 0.40, "z": -0.05, "visibility": 0.98},
+        "left_hip": {"x": 0.45, "y": 0.65, "z": 0.0, "visibility": 0.99},
+        "right_hip": {"x": 0.55, "y": 0.65, "z": 0.0, "visibility": 0.99},
+        "left_knee": {"x": 0.45, "y": 0.82, "z": 0.0, "visibility": 0.99},
+        "right_knee": {"x": 0.55, "y": 0.82, "z": 0.0, "visibility": 0.99},
+        "left_ankle": {"x": 0.45, "y": 0.96, "z": 0.0, "visibility": 0.99},
+        "right_ankle": {"x": 0.55, "y": 0.96, "z": 0.0, "visibility": 0.99}
+      },
+      "timestamp": 0.066
+    }
+  ]
+}

@@ -1,0 +1,152 @@
+{
+  "id": "lateral_raise",
+  "name": "Lateral Raise",
+  "aliases": [
+    "side raise",
+    "dumbbell lateral raise",
+    "cable lateral raise"
+  ],
+  "family": "shoulder_elevation",
+  "movement_patterns": [
+    "raise",
+    "abduction"
+  ],
+  "target_muscles": [
+    "lateral deltoid"
+  ],
+  "secondary_muscles": [
+    "upper trapezius"
+  ],
+  "primary_joints": [
+    "shoulder"
+  ],
+  "equipment": [
+    "dumbbell",
+    "cable"
+  ],
+  "body_position": "standing",
+  "difficulty": "beginner",
+  "camera": {
+    "supported_views": [
+      "front"
+    ],
+    "preferred": "front",
+    "full_body": false,
+    "notes": ""
+  },
+  "required_joints": [
+    "left_shoulder",
+    "right_shoulder",
+    "left_elbow",
+    "right_elbow",
+    "left_wrist",
+    "right_wrist",
+    "left_hip",
+    "right_hip"
+  ],
+  "rep": {
+    "signal": {
+      "primitive": "segment_vertical_angle",
+      "joints": [
+        "shoulder",
+        "elbow"
+      ],
+      "side": "mean"
+    },
+    "rest": 10,
+    "peak": 90,
+    "toward_peak_phase": "concentric"
+  },
+  "form_rules": [
+    {
+      "id": "rom",
+      "type": "rom",
+      "min": 0.85,
+      "max": null,
+      "severity": "warn",
+      "good": "Raised to shoulder height",
+      "bad": "Raise to shoulder height"
+    },
+    {
+      "id": "not_too_high",
+      "type": "rom",
+      "min": null,
+      "max": 1.4,
+      "severity": "info",
+      "good": "",
+      "bad": "Don't go above shoulder height"
+    },
+    {
+      "id": "tempo",
+      "type": "tempo",
+      "min_phase_seconds": 0.6,
+      "severity": "warn",
+      "good": "Controlled tempo",
+      "bad": "Slow down - control both halves of the rep"
+    },
+    {
+      "id": "arms_long",
+      "type": "limit",
+      "signal": {
+        "primitive": "joint_angle",
+        "joints": [
+          "shoulder",
+          "elbow",
+          "wrist"
+        ],
+        "side": "mean"
+      },
+      "max": null,
+      "min": 140,
+      "severity": "warn",
+      "good": "Arms stay long",
+      "bad": "Elbows are bending too much"
+    },
+    {
+      "id": "no_swing",
+      "type": "limit",
+      "signal": {
+        "primitive": "trunk_lean"
+      },
+      "max": 10,
+      "min": null,
+      "severity": "warn",
+      "good": "No swinging",
+      "bad": "Avoid leaning or swinging"
+    },
+    {
+      "id": "arm_sync",
+      "type": "symmetry",
+      "signal": {
+        "primitive": "segment_vertical_angle",
+        "joints": [
+          "shoulder",
+          "elbow"
+        ],
+        "side": "mean"
+      },
+      "max": 12,
+      "severity": "warn",
+      "good": "Arms rise together",
+      "bad": "Arms are uneven"
+    }
+  ],
+  "posture": [
+    {
+      "signal": {
+        "primitive": "joint_angle",
+        "joints": [
+          "shoulder",
+          "elbow",
+          "wrist"
+        ],
+        "side": "mean"
+      },
+      "stat": "median",
+      "min": 145,
+      "max": null,
+      "scale": 30
+    }
+  ],
+  "motion_plane": "frontal"
+}

@@ -1,0 +1,143 @@
+{
+  "id": "hammer_curl",
+  "name": "Hammer Curl",
+  "aliases": [
+    "neutral grip curl",
+    "db hammer curl"
+  ],
+  "family": "elbow_flexion",
+  "movement_patterns": [
+    "curl",
+    "flexion"
+  ],
+  "target_muscles": [
+    "biceps",
+    "brachialis"
+  ],
+  "secondary_muscles": [
+    "forearms"
+  ],
+  "primary_joints": [
+    "elbow"
+  ],
+  "equipment": [
+    "dumbbell"
+  ],
+  "body_position": "standing",
+  "difficulty": "beginner",
+  "camera": {
+    "supported_views": [
+      "front",
+      "side",
+      "45deg"
+    ],
+    "preferred": "front",
+    "full_body": false,
+    "notes": ""
+  },
+  "required_joints": [
+    "left_shoulder",
+    "right_shoulder",
+    "left_elbow",
+    "right_elbow",
+    "left_wrist",
+    "right_wrist",
+    "left_hip",
+    "right_hip"
+  ],
+  "rep": {
+    "signal": {
+      "primitive": "joint_angle",
+      "joints": [
+        "shoulder",
+        "elbow",
+        "wrist"
+      ],
+      "side": "mean"
+    },
+    "rest": 170,
+    "peak": 45,
+    "toward_peak_phase": "concentric"
+  },
+  "form_rules": [
+    {
+      "id": "rom",
+      "type": "rom",
+      "min": 0.85,
+      "max": null,
+      "severity": "warn",
+      "good": "Full curl",
+      "bad": "Curl all the way up"
+    },
+    {
+      "id": "tempo",
+      "type": "tempo",
+      "min_phase_seconds": 0.6,
+      "severity": "warn",
+      "good": "Controlled tempo",
+      "bad": "Slow down - control both halves of the rep"
+    },
+    {
+      "id": "elbow_pinned",
+      "type": "stability",
+      "signal": {
+        "primitive": "segment_vertical_angle",
+        "joints": [
+          "shoulder",
+          "elbow"
+        ],
+        "side": "mean"
+      },
+      "max": 18,
+      "severity": "warn",
+      "good": "Elbows stay pinned",
+      "bad": "Keep your elbows by your sides"
+    },
+    {
+      "id": "torso_steady",
+      "type": "limit",
+      "signal": {
+        "primitive": "trunk_lean"
+      },
+      "max": 12,
+      "min": null,
+      "severity": "warn",
+      "good": "Torso steady",
+      "bad": "Don't swing your torso"
+    },
+    {
+      "id": "arm_sync",
+      "type": "symmetry",
+      "signal": {
+        "primitive": "joint_angle",
+        "joints": [
+          "shoulder",
+          "elbow",
+          "wrist"
+        ],
+        "side": "mean"
+      },
+      "max": 15,
+      "severity": "warn",
+      "good": "Arms in sync",
+      "bad": "Arms are uneven"
+    }
+  ],
+  "posture": [
+    {
+      "signal": {
+        "primitive": "segment_vertical_angle",
+        "joints": [
+          "shoulder",
+          "elbow"
+        ],
+        "side": "mean"
+      },
+      "stat": "median",
+      "min": null,
+      "max": 35,
+      "scale": 30
+    }
+  ],
+  "motion_plane": "sagittal"
+}

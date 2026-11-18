@@ -1,0 +1,122 @@
+{
+  "id": "romanian_deadlift",
+  "name": "Romanian Deadlift",
+  "aliases": [
+    "rdl",
+    "stiff leg deadlift",
+    "dumbbell rdl"
+  ],
+  "family": "hip_hinge",
+  "movement_patterns": [
+    "hinge"
+  ],
+  "target_muscles": [
+    "hamstrings",
+    "glutes"
+  ],
+  "secondary_muscles": [
+    "lower back",
+    "forearms"
+  ],
+  "primary_joints": [
+    "hip"
+  ],
+  "equipment": [
+    "barbell",
+    "dumbbell"
+  ],
+  "body_position": "standing",
+  "difficulty": "intermediate",
+  "camera": {
+    "supported_views": [
+      "side",
+      "45deg"
+    ],
+    "preferred": "side",
+    "full_body": true,
+    "notes": ""
+  },
+  "required_joints": [
+    "left_shoulder",
+    "right_shoulder",
+    "left_elbow",
+    "right_elbow",
+    "left_wrist",
+    "right_wrist",
+    "left_hip",
+    "right_hip",
+    "left_knee",
+    "right_knee",
+    "left_ankle",
+    "right_ankle"
+  ],
+  "rep": {
+    "signal": {
+      "primitive": "joint_angle",
+      "joints": [
+        "shoulder",
+        "hip",
+        "knee"
+      ],
+      "side": "mean"
+    },
+    "rest": 172,
+    "peak": 100,
+    "toward_peak_phase": "eccentric"
+  },
+  "form_rules": [
+    {
+      "id": "rom",
+      "type": "rom",
+      "min": 0.8,
+      "max": null,
+      "severity": "warn",
+      "good": "Good hinge depth",
+      "bad": "Hinge a little deeper"
+    },
+    {
+      "id": "tempo",
+      "type": "tempo",
+      "min_phase_seconds": 0.7,
+      "severity": "warn",
+      "good": "Controlled tempo",
+      "bad": "Slow down - control both halves of the rep"
+    },
+    {
+      "id": "soft_knees",
+      "type": "limit",
+      "signal": {
+        "primitive": "joint_angle",
+        "joints": [
+          "hip",
+          "knee",
+          "ankle"
+        ],
+        "side": "mean"
+      },
+      "max": null,
+      "min": 140,
+      "severity": "warn",
+      "good": "Knees stay soft",
+      "bad": "Too much knee bend - hinge at the hips"
+    }
+  ],
+  "posture": [
+    {
+      "signal": {
+        "primitive": "joint_angle",
+        "joints": [
+          "hip",
+          "knee",
+          "ankle"
+        ],
+        "side": "mean"
+      },
+      "stat": "min",
+      "min": 140,
+      "max": null,
+      "scale": 30
+    }
+  ],
+  "motion_plane": "sagittal"
+}

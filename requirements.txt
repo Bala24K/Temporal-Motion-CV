@@ -1,0 +1,13 @@
+fastapi>=0.110
+uvicorn[standard]>=0.29     # [standard] provides the WebSocket library /ws/live needs
+sqlalchemy>=2.0
+pydantic>=2.6
+numpy>=1.26
+onnxruntime>=1.17
+opencv-python-headless>=4.9      # video ingestion
+python-multipart>=0.0.9
+PyJWT[crypto]>=2.8                # OIDC verification
+opentelemetry-api>=1.27
+opentelemetry-sdk>=1.27
+PyYAML>=6
+psycopg[binary]>=3.1        # only when DATABASE_URL points at PostgreSQL

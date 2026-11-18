@@ -1,0 +1,8 @@
+seed: 0
+split_seed: 0
+window: 90
+embed_dim: 64
+epochs: 60
+batch_size: 32
+lr: 0.001
+temperature: 0.1

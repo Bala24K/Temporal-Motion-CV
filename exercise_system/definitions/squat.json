@@ -1,0 +1,129 @@
+{
+  "id": "squat",
+  "name": "Squat",
+  "aliases": [
+    "back squat",
+    "bodyweight squat",
+    "air squat"
+  ],
+  "family": "knee_flexion",
+  "movement_patterns": [
+    "squat"
+  ],
+  "target_muscles": [
+    "quadriceps",
+    "glutes"
+  ],
+  "secondary_muscles": [
+    "hamstrings",
+    "core"
+  ],
+  "primary_joints": [
+    "knee",
+    "hip"
+  ],
+  "equipment": [
+    "bodyweight",
+    "barbell"
+  ],
+  "body_position": "standing",
+  "difficulty": "beginner",
+  "camera": {
+    "supported_views": [
+      "side",
+      "45deg",
+      "front"
+    ],
+    "preferred": "side",
+    "full_body": true,
+    "notes": ""
+  },
+  "required_joints": [
+    "left_hip",
+    "right_hip",
+    "left_knee",
+    "right_knee",
+    "left_ankle",
+    "right_ankle"
+  ],
+  "rep": {
+    "signal": {
+      "primitive": "joint_angle",
+      "joints": [
+        "hip",
+        "knee",
+        "ankle"
+      ],
+      "side": "mean"
+    },
+    "rest": 172,
+    "peak": 85,
+    "toward_peak_phase": "eccentric"
+  },
+  "form_rules": [
+    {
+      "id": "rom",
+      "type": "rom",
+      "min": 0.85,
+      "max": null,
+      "severity": "warn",
+      "good": "Good depth",
+      "bad": "Try to go a little deeper"
+    },
+    {
+      "id": "tempo",
+      "type": "tempo",
+      "min_phase_seconds": 0.7,
+      "severity": "warn",
+      "good": "Controlled tempo",
+      "bad": "Slow down - control both halves of the rep"
+    },
+    {
+      "id": "chest_up",
+      "type": "limit",
+      "signal": {
+        "primitive": "trunk_lean"
+      },
+      "max": 50,
+      "min": null,
+      "severity": "warn",
+      "good": "Chest stays up",
+      "bad": "Torso is leaning too far forward"
+    },
+    {
+      "id": "knee_sync",
+      "type": "symmetry",
+      "signal": {
+        "primitive": "joint_angle",
+        "joints": [
+          "hip",
+          "knee",
+          "ankle"
+        ],
+        "side": "mean"
+      },
+      "max": 12,
+      "severity": "warn",
+      "good": "Knees tracking evenly",
+      "bad": "Knees are uneven"
+    }
+  ],
+  "posture": [
+    {
+      "signal": {
+        "primitive": "joint_angle",
+        "joints": [
+          "shoulder",
+          "elbow",
+          "wrist"
+        ],
+        "side": "mean"
+      },
+      "stat": "median",
+      "min": 125,
+      "max": null,
+      "scale": 30
+    }
+  ],
+  "motion_plane": "sagittal"
+}

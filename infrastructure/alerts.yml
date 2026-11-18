@@ -1,0 +1,27 @@
+groups:
+  - name: kinetic
+    rules:
+      - alert: FrameProcessingSlow
+        expr: fitness_latency_ms{op="frame_process",q="p95"} > 50
+        for: 5m
+        labels: { severity: page }
+        annotations: { summary: "p95 server-side frame processing above 50 ms (budget: one 30 fps frame is 33 ms)" }
+      - alert: RecognizersDisagree
+        expr: fitness_recognizer_disagree_total / clamp_min(fitness_recognizer_agree_total + fitness_recognizer_disagree_total, 1) > 0.3
+        for: 15m
+        labels: { severity: ticket }
+        annotations: { summary: "Rule-based and learned recognizers disagree on >30% of decisions - investigate drift or a bad model" }
+      - alert: UnsupportedRateHigh
+        expr: fitness_exercise_unsupported_total / clamp_min(fitness_exercise_resolve_total, 1) > 0.4
+        for: 1h
+        labels: { severity: ticket }
+        annotations: { summary: "Over 40% of exercise lookups are unsupported - check the admin console request queue" }
+      - alert: ClientCameraFpsLow
+        expr: fitness_latency_ms{op="client_camera_fps",q="p50"} < 15
+        for: 10m
+        labels: { severity: ticket }
+        annotations: { summary: "Median client camera FPS below 15 - rep counting will degrade" }
+      - alert: LearnedRecognizerErrors
+        expr: increase(fitness_learned_recognizer_errors_total[10m]) > 0
+        labels: { severity: page }
+        annotations: { summary: "Learned recognizer raised errors (service is falling back to rules)" }

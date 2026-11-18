@@ -1,0 +1,12 @@
+# Reproducible data -> model pipeline (run: dvc repro). Large artifacts are tracked by DVC, code by git.
+stages:
+  report:
+    cmd: python -m ml.data.cli report --store data/dataset > reports/dataset_report.json
+    deps: [data/dataset/manifest.jsonl, data/dataset/annotations.jsonl, ml/data/report.py]
+    outs: [reports/dataset_report.json]
+  encoder:
+    cmd: python -m ml.train_encoder --store data/dataset --out models/encoder.onnx --epochs 60
+    deps: [data/dataset, ml/train_encoder.py, ml/torch_models.py]
+    params: [train.yaml:]
+    outs: [models/encoder.onnx, models/encoder.json]
+    metrics: [reports/encoder_metrics.json: {cache: false}]

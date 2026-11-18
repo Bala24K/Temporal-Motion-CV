@@ -1,0 +1,280 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Kinetic — movement coach</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Figtree:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#eef1f4;--surface:#fff;--raise:#f6f8fa;--ink:#13202b;--mute:#62717f;--line:#dbe1e7;--brand:#2b55f5;--brand-ink:#fff;--good:#14895c;--warn:#c77610;--bad:#c93c3c;--r:14px;
+--disp:"Bricolage Grotesque","Avenir Next","Segoe UI",system-ui,sans-serif;--body:"Figtree","Segoe UI",system-ui,sans-serif}
+@media(prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#0d151d;--surface:#15202b;--raise:#1b2836;--ink:#e8eef4;--mute:#8a9bab;--line:#263544;--brand:#6f92ff;--brand-ink:#0b1220;--good:#3fcf93;--warn:#f0a646;--bad:#ff7a7a}}
+:root[data-theme=dark]{--bg:#0d151d;--surface:#15202b;--raise:#1b2836;--ink:#e8eef4;--mute:#8a9bab;--line:#263544;--brand:#6f92ff;--brand-ink:#0b1220;--good:#3fcf93;--warn:#f0a646;--bad:#ff7a7a}
+*{box-sizing:border-box}html,body{margin:0}body{background:var(--bg);color:var(--ink);font:400 16px/1.5 var(--body);padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom)}
+h1,h2,h3{font-family:var(--disp);letter-spacing:-.02em;margin:0 0 .4em;line-height:1.1}h1{font-size:2.3rem;font-weight:800}h2{font-size:1.35rem;font-weight:700}h3{font-size:1.05rem;font-weight:700}
+p{margin:.3em 0}.mute{color:var(--mute)}.small{font-size:.86rem}
+a{color:inherit}button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer;border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:.55em 1.1em;font-weight:600}
+button.primary{background:var(--brand);border-color:var(--brand);color:var(--brand-ink)}button.ghost{background:none;border-color:transparent;color:var(--mute)}
+button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,a:focus-visible{outline:3px solid var(--brand);outline-offset:2px}
+button:disabled{opacity:.5;cursor:default}
+input,select,textarea{background:var(--raise);border:1px solid var(--line);border-radius:10px;padding:.6em .8em;width:100%}
+label{display:block;font-weight:600;font-size:.88rem;margin:.8em 0 .25em}
+nav{position:sticky;top:0;z-index:5;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--line);padding-top:env(safe-area-inset-top)}
+nav .in{max-width:1040px;margin:auto;display:flex;gap:.25rem;align-items:center;padding:.5rem 1rem;overflow-x:auto}
+nav .logo{font:800 1.2rem var(--disp);margin-right:auto;padding-right:1rem}
+nav a{text-decoration:none;padding:.4em .8em;border-radius:999px;font-weight:600;color:var(--mute);white-space:nowrap}nav a.on{background:var(--ink);color:var(--bg)}
+main{max-width:1040px;margin:auto;padding:1.4rem 1rem 4rem}
+.grid{display:grid;gap:1rem}.g2{grid-template-columns:repeat(auto-fit,minmax(300px,1fr))}.g3{grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:1.1rem}
+.row{display:flex;gap:.6rem;align-items:center;flex-wrap:wrap}.between{justify-content:space-between}.end{margin-left:auto}
+.stat b{display:block;font:800 1.9rem var(--disp);letter-spacing:-.02em}.stat span{color:var(--mute);font-size:.85rem}
+.tag{display:inline-block;font-size:.76rem;font-weight:600;padding:.15em .6em;border-radius:999px;background:var(--raise);border:1px solid var(--line);color:var(--mute)}
+.tag.good{color:var(--good);border-color:currentColor;background:none}.tag.warn{color:var(--warn);border-color:currentColor;background:none}.tag.bad{color:var(--bad);border-color:currentColor;background:none}
+table{width:100%;border-collapse:collapse}td,th{text-align:left;padding:.5rem .4rem;border-bottom:1px solid var(--line);font-size:.92rem;vertical-align:top}th{color:var(--mute);font-weight:600}
+.bars{display:flex;align-items:flex-end;gap:4px;height:110px}.bars i{flex:1;background:var(--brand);border-radius:4px 4px 0 0;min-height:2px;opacity:.85}.bars i.z{background:var(--line)}
+.meter{height:8px;background:var(--raise);border-radius:9px;overflow:hidden}.meter i{display:block;height:100%;background:var(--brand)}
+.notice{border-left:4px solid var(--warn);background:var(--raise);padding:.7rem .9rem;border-radius:8px}
+.toast{position:fixed;left:50%;bottom:calc(1rem + env(safe-area-inset-bottom));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:.7em 1.2em;border-radius:999px;z-index:20;max-width:92vw}
+/* live */
+.live{position:fixed;inset:0;z-index:10;background:#0a1016;color:#eef3f8;display:grid;grid-template-rows:auto 1fr auto;padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom)}
+.live header{display:flex;gap:.6rem;align-items:center;padding:.8rem 1rem}.live header .t{font:700 1.1rem var(--disp)}
+.stage{position:relative;min-height:0}.stage video,.stage canvas{position:absolute;inset:0;width:100%;height:100%;object-fit:contain}
+.stage video{transform:scaleX(-1);opacity:.85}.stage canvas.sk{transform:none}.stage.mirror canvas.sk{transform:scaleX(-1)}
+.count{position:absolute;left:clamp(4rem,17%,14rem);top:50%;transform:translate(-50%,-50%);text-align:center;pointer-events:none}@media(max-width:720px){.count{left:50%;top:26%}.count .n{opacity:.55}}
+.count .n{font:800 min(26vw,13rem)/0.9 var(--disp);letter-spacing:-.05em;text-shadow:0 4px 40px #000a}.count .l{font-size:1rem;opacity:.75}
+.ring{position:absolute;inset:auto 1rem 1rem auto;width:76px;height:76px}
+.chips{position:absolute;left:1rem;right:1rem;bottom:1rem;display:flex;flex-direction:column;gap:.4rem;align-items:flex-start;max-width:calc(100% - 7rem)}
+.chip{padding:.45em .9em;border-radius:999px;background:#0008;backdrop-filter:blur(6px);font-weight:600;border:1px solid #fff3}
+.chip.good::before{content:"✓ ";color:#4fe0a2}.chip.warning{border-color:#f0a646}.chip.warning::before{content:"! ";color:#f0a646}.chip.info{opacity:.85}
+.live footer{display:flex;gap:.6rem;align-items:center;justify-content:space-between;padding:.8rem 1rem;flex-wrap:wrap}
+.live button{background:#1a2530;border-color:#2a3a4a;color:#eef3f8}.live button.primary{background:#6f92ff;border-color:#6f92ff;color:#0b1220}
+.live select,.live input{background:#15202b;border-color:#2a3a4a;color:#eef3f8;width:auto}
+.hint{position:absolute;top:1rem;left:50%;transform:translateX(-50%);padding:.5em 1em;border-radius:999px;background:#c77610;color:#fff;font-weight:600;max-width:90%;text-align:center}
+@media(prefers-reduced-motion:no-preference){.count .n{transition:transform .12s}.count .n.pop{transform:scale(1.06)}}
+</style>
+</head>
+<body>
+<div id="nav"></div><main id="app"></main><div id="live-root"></div>
+<script>
+"use strict";
+const $=(s,r=document)=>r.querySelector(s), esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const S={token:localStorage.getItem("tok"),user:null,ex:null,plan:null};
+async function api(path,opt={}){
+  const h={"Content-Type":"application/json"};if(S.token)h.Authorization="Bearer "+S.token;
+  const r=await fetch(path,{...opt,headers:h,body:opt.body!==undefined?JSON.stringify(opt.body):undefined});
+  if(r.status===204)return null;let d=null;try{d=await r.json()}catch{}
+  if(!r.ok){const m=d&&(typeof d.detail==="string"?d.detail:d.detail?.blocked_by?.join("; ")||d.detail?.errors?.join("; ")||JSON.stringify(d.detail));const e=new Error(m||r.statusText);e.status=r.status;e.data=d;throw e}
+  return d}
+const toast=m=>{const t=document.createElement("div");t.className="toast";t.setAttribute("role","status");t.textContent=m;document.body.append(t);setTimeout(()=>t.remove(),3200)};
+const guard=fn=>async(...a)=>{try{return await fn(...a)}catch(e){toast(e.message)}};
+
+/* ---------- routing ---------- */
+const ROUTES={home:Home,workout:Workout,exercises:Exercises,progress:Progress,profile:Profile,admin:Admin};
+async function route(){
+  if(!S.token){S.user=null;renderNav();return Auth()}
+  if(!S.user){try{S.user=await api("/api/auth/me")}catch{S.token=null;localStorage.removeItem("tok");return route()}}
+  if(!S.ex)S.ex=(await api("/api/exercises")).exercises;
+  const name=(location.hash.slice(2)||"home");renderNav(name);
+  await (ROUTES[name]||Home)(name);
+}
+function renderNav(on){
+  const n=$("#nav");if(!S.user){n.innerHTML="";return}
+  const L=[["home","Home"],["workout","Workout"],["exercises","Exercises"],["progress","Progress"],["profile","Profile"]];if(S.user.is_admin)L.push(["admin","Console"]);
+  n.innerHTML=`<nav aria-label="Main"><div class="in"><span class="logo">Kinetic</span>${L.map(([k,t])=>`<a href="#/${k}" class="${k===on?"on":""}" ${k===on?'aria-current="page"':""}>${t}</a>`).join("")}</div></nav>`}
+addEventListener("hashchange",route);
+
+/* ---------- auth ---------- */
+function Auth(){
+  $("#app").innerHTML=`<div style="max-width:420px;margin:8vh auto 0"><h1>Train with a coach that watches.</h1><p class="mute">Counts your reps, checks your form, remembers your range.</p>
+  <form class="card" id="f" style="margin-top:1.4rem"><label for="e">Email</label><input id="e" type="email" required autocomplete="email">
+  <label for="p">Password (8+ characters)</label><input id="p" type="password" minlength="8" required autocomplete="current-password">
+  <div class="row" style="margin-top:1.1rem"><button class="primary" data-m="login">Sign in</button><button data-m="register" type="button" id="reg">Create account</button></div></form></div>`;
+  const go=guard(async m=>{const r=await api("/api/auth/"+m,{method:"POST",body:{email:$("#e").value,password:$("#p").value}});S.token=r.token;localStorage.setItem("tok",r.token);S.user=r.user;location.hash="#/home";route()});
+  $("#f").onsubmit=e=>{e.preventDefault();go("login")};$("#reg").onclick=()=>{if($("#f").reportValidity())go("register")}}
+
+/* ---------- home ---------- */
+const bars=(arr,key)=>{const m=Math.max(1,...arr.map(x=>x[key]||0));return `<div class="bars" role="img" aria-label="${key} by day">${arr.map(x=>`<i class="${x[key]?"":"z"}" style="height:${Math.max(2,(x[key]||0)/m*100)}%" title="${x.date}: ${x[key]||0}"></i>`).join("")}</div>`};
+async function Home(){
+  const [w,p,ws]=await Promise.all([api("/api/progress?range=week"),api("/api/progress?range=today"),api("/api/workouts")]);
+  const h=new Date().getHours(),g=h<12?"Good morning":h<18?"Good afternoon":"Good evening",next=ws[0];
+  $("#app").innerHTML=`<h1>${g}${S.user.name?", "+esc(S.user.name):""}.</h1>
+  <div class="grid g2" style="margin-top:1rem"><div class="card"><h2>${next?esc(next.name):"No workout yet"}</h2>
+   ${next?`<p class="mute">${next.items.length} exercises · ${next.muscles.map(esc).join(", ")||"manual tracking"}</p>
+   <ul style="padding-left:1.1rem">${next.items.slice(0,5).map(i=>`<li>${esc(i.exercise_name)} <span class="mute">${i.sets}×${i.reps}${i.weight_kg?" @ "+i.weight_kg+"kg":""}</span></li>`).join("")}</ul>
+   <button class="primary" id="go">Start workout</button>`:`<p class="mute">Build one in the Workout tab, or jump straight into a quick set.</p><a href="#/workout"><button class="primary">Build a workout</button></a>`}
+   <button id="quick" class="ghost">Quick set</button></div>
+  <div class="card"><h2>This week</h2><div class="grid g3"><div class="stat"><b>${w.workouts}</b><span>workouts of ${w.weekly_target}</span></div><div class="stat"><b>${Math.round(w.volume_kg).toLocaleString()}</b><span>kg volume</span></div><div class="stat"><b>${w.avg_form_score??"–"}</b><span>form consistency</span></div></div>
+   <div style="margin-top:1rem">${bars(w.series,"volume_kg")}</div></div></div>
+  ${p.sets?`<p class="mute" style="margin-top:1rem">Today: ${p.sets} sets, ${p.reps} reps.</p>`:""}`;
+  if(next)$("#go").onclick=guard(()=>startWorkout(next));$("#quick").onclick=guard(()=>startWorkout(null))}
+
+/* ---------- exercises ---------- */
+async function Exercises(){
+  const muscles=[...new Set(S.ex.flatMap(e=>e.target_muscles))].sort();
+  $("#app").innerHTML=`<h1>Exercises</h1><div class="row"><input id="q" placeholder="Search…" aria-label="Search exercises" style="max-width:260px"><select id="m" aria-label="Muscle" style="max-width:200px"><option value="">All muscles</option>${muscles.map(m=>`<option>${esc(m)}</option>`).join("")}</select></div>
+  <div id="list" class="grid g3" style="margin-top:1rem"></div>
+  <div class="card" style="margin-top:1.4rem"><h3>Don't see yours?</h3><p class="mute small">Check whether AI analysis is available. If not, you can still track it, and we log the request so it can be added.</p>
+  <div class="row"><input id="chk" placeholder="e.g. Cable Y Raise" aria-label="Exercise name" style="max-width:300px"><button id="go">Check</button></div><div id="res" style="margin-top:.7rem"></div></div>`;
+  const draw=()=>{const q=$("#q").value.toLowerCase(),m=$("#m").value;
+   $("#list").innerHTML=S.ex.filter(e=>(!q||e.name.toLowerCase().includes(q))&&(!m||e.target_muscles.includes(m))).map(e=>`<div class="card"><h3>${esc(e.name)}</h3><p class="small mute">${e.target_muscles.map(esc).join(", ")}</p><div class="row" style="margin-top:.5rem">${e.equipment.map(x=>`<span class="tag">${esc(x)}</span>`).join("")}<span class="tag good">Camera: ${esc(e.camera.preferred)}</span></div></div>`).join("")||`<p class="mute">Nothing matches.</p>`};
+  $("#q").oninput=$("#m").onchange=draw;draw();
+  $("#go").onclick=guard(async()=>{const r=await api("/api/exercises/resolve",{method:"POST",body:{name:$("#chk").value}});
+   $("#res").innerHTML=r.supported?`<span class="tag good">Supported</span> matched <b>${esc(r.exercise.name)}</b>`:`<div class="notice"><b>Exercise not fully supported yet.</b><p class="small">${esc(r.message)}</p>${r.similar.length?`<p class="small">Similar: ${r.similar.map(s=>esc(s.name)).join(", ")}</p>`:""}</div>`})}
+
+/* ---------- workout builder ---------- */
+async function Workout(){
+  const ws=await api("/api/workouts");
+  $("#app").innerHTML=`<h1>Workouts</h1><div class="grid g2"><div id="wl">${ws.map(w=>`<div class="card" style="margin-bottom:1rem"><div class="row between"><h2>${esc(w.name)}</h2><button class="primary" data-s="${w.id}">Start</button></div>
+   <table>${w.items.map(i=>`<tr><td>${esc(i.exercise_name)}${i.ai_analysis?"":` <span class="tag warn">manual</span>`}</td><td class="mute">${i.sets}×${i.reps}${i.weight_kg?" · "+i.weight_kg+"kg":""}</td></tr>`).join("")}</table>
+   <button class="ghost" data-d="${w.id}">Delete</button></div>`).join("")||`<p class="mute">No workouts yet.</p>`}</div>
+  <form class="card" id="nf"><h2>New workout</h2><label for="wn">Name</label><input id="wn" required placeholder="Push day"><div id="items"></div>
+  <datalist id="dl">${S.ex.map(e=>`<option value="${esc(e.name)}">`).join("")}</datalist>
+  <div class="row" style="margin-top:.8rem"><button type="button" id="add">Add exercise</button><button class="primary end">Save workout</button></div></form></div>`;
+  const add=()=>{const d=document.createElement("div");d.className="row";d.style.marginTop=".6rem";
+   d.innerHTML=`<input list="dl" class="ex" placeholder="Exercise" aria-label="Exercise" required style="flex:2 1 160px"><input class="sets" type="number" min="1" value="3" aria-label="Sets" style="width:64px"><input class="reps" type="number" min="1" value="10" aria-label="Reps" style="width:64px"><input class="kg" type="number" min="0" step="0.5" value="0" aria-label="Weight kg" style="width:76px"><span class="small mute flag"></span>`;
+   $("#items").append(d);const i=$(".ex",d);i.onchange=()=>{const hit=S.ex.some(e=>e.name.toLowerCase()===i.value.toLowerCase());$(".flag",d).innerHTML=hit||!i.value?"":`<span class="tag warn">manual</span>`};};
+  add();$("#add").onclick=add;
+  $("#nf").onsubmit=guard(async e=>{e.preventDefault();const items=[...$("#items").children].map(d=>({exercise:$(".ex",d).value,sets:+$(".sets",d).value,reps:+$(".reps",d).value,weight_kg:+$(".kg",d).value}));
+   const w=await api("/api/workouts",{method:"POST",body:{name:$("#wn").value,items}});
+   const un=w.items.filter(i=>!i.ai_analysis);if(un.length)for(const i of un)await api("/api/exercises/resolve",{method:"POST",body:{name:i.exercise_name}});
+   toast(un.length?`Saved. ${un.length} exercise(s) will be tracked manually.`:"Workout saved.");Workout()});
+  $("#wl").onclick=guard(async e=>{const s=e.target.dataset.s,d=e.target.dataset.d;
+   if(s)startWorkout(ws.find(w=>w.id==s));if(d&&confirm("Delete this workout?")){await api("/api/workouts/"+d,{method:"DELETE"});Workout()}})}
+
+/* ---------- live workout ---------- */
+const MP={nose:0,left_shoulder:11,right_shoulder:12,left_elbow:13,right_elbow:14,left_wrist:15,right_wrist:16,left_hip:23,right_hip:24,left_knee:25,right_knee:26,left_ankle:27,right_ankle:28};
+const BONES=[["left_shoulder","right_shoulder"],["left_shoulder","left_elbow"],["left_elbow","left_wrist"],["right_shoulder","right_elbow"],["right_elbow","right_wrist"],["left_shoulder","left_hip"],["right_shoulder","right_hip"],["left_hip","right_hip"],["left_hip","left_knee"],["left_knee","left_ankle"],["right_hip","right_knee"],["right_knee","right_ankle"]];
+async function startWorkout(w){
+  const sess=await api("/api/sessions",{method:"POST",body:{workout_id:w?.id||null,name:w?.name||"Quick set"}});
+  const queue=[];
+  if(w)w.items.forEach(i=>{for(let s=1;s<=i.sets;s++)queue.push({ex:i,set:s,of:i.sets})});
+  else queue.push({ex:{exercise_id:"auto",exercise_name:"Auto-detect",reps:10,weight_kg:0,rest_seconds:60,ai_analysis:true},set:1,of:1});
+  S.plan={sess,queue,i:0,w};runLive()}
+function runLive(){
+  const P=S.plan,cur=P.queue[P.i];
+  if(!cur){return finishSession()}
+  const root=$("#live-root"),ex=cur.ex,ai=ex.ai_analysis;
+  root.innerHTML=`<div class="live" role="dialog" aria-label="Live workout"><header><button id="x" aria-label="Leave workout">✕</button><span class="t">${esc(ex.exercise_name)}</span><span class="tag" id="sl">Set ${cur.set}/${cur.of}</span><span class="end tag" id="st">ready</span></header>
+   <div class="stage" id="stage"><video id="v" playsinline muted hidden></video><canvas class="sk" id="c"></canvas><div class="count"><div class="n" id="n">0</div><div class="l" id="l">of ${ex.reps}</div></div>
+   <svg class="ring" viewBox="0 0 36 36" aria-hidden="true"><circle cx="18" cy="18" r="15" fill="none" stroke="#fff3" stroke-width="3"/><circle id="rg" cx="18" cy="18" r="15" fill="none" stroke="#6f92ff" stroke-width="3" stroke-linecap="round" stroke-dasharray="94.2" stroke-dashoffset="94.2" transform="rotate(-90 18 18)"/></svg>
+   <div class="chips" id="chips" aria-live="polite"></div><div class="hint" id="hint" hidden></div></div>
+   <footer>${ai?`<div class="row"><select id="src" aria-label="Video source"><option value="camera">Camera</option><option value="demo">Demo clip</option></select><select id="flt" aria-label="Demo form" hidden><option value="">Clean form</option><option value="shallow">Shallow</option><option value="fast">Too fast</option><option value="drift">Elbow drift</option><option value="lean">Torso lean</option></select><button class="primary" id="go">Start</button></div>`:`<div class="notice" style="color:#111;flex:1"><b>Manual tracking.</b> Reliable AI analysis isn't available for this exercise yet.</div>`}
+   <div class="row"><label style="margin:0" class="small" for="kg">kg</label><input id="kg" type="number" value="${ex.weight_kg||0}" min="0" step="0.5" style="width:80px"><label class="small" style="margin:0" for="rp">reps</label><input id="rp" type="number" value="${ex.reps}" min="0" style="width:70px"><button id="end" class="primary">${ai?"End set":"Log set"}</button></div></footer></div>`;
+  const L={ws:null,src:null,stop:false,last:null};
+  const leave=()=>{L.stop=true;try{L.ws?.close()}catch{};L.src?.stop();root.innerHTML=""};
+  $("#x").onclick=()=>{if(confirm("Leave workout? Logged sets are kept.")){leave();finishSession()}};
+  const setRing=p=>$("#rg").style.strokeDashoffset=94.2*(1-Math.max(0,Math.min(1,p)));
+  if(ai){
+    $("#src").onchange=()=>$("#flt").hidden=$("#src").value!=="demo";
+    $("#go").onclick=guard(async()=>{
+      $("#go").disabled=true;$("#src").disabled=true;
+      const tok=encodeURIComponent(S.token),exid=ex.exercise_id||"auto";
+      const ws=new WebSocket(`${location.protocol==="https:"?"wss":"ws"}://${location.host}/ws/live?exercise=${exid}&target_reps=${ex.reps}&session_id=${P.sess.id}&token=${tok}`);L.ws=ws;
+      ws.onmessage=ev=>{const m=JSON.parse(ev.data);
+        if(m.type==="state"){L.last=m;const n=$("#n");if(n&&+n.textContent!==m.reps){n.textContent=m.reps;n.classList.add("pop");setTimeout(()=>n.classList.remove("pop"),140)}
+          $("#st").textContent=m.phase;setRing(m.progress);
+          $("#chips").innerHTML=m.feedback.map(f=>`<span class="chip ${f.status}">${esc(f.message)}</span>`).join("");
+          const hn=$("#hint");hn.hidden=m.quality.ok;hn.textContent=m.quality.message||""}
+        if(m.type==="recognition"){$("#st").textContent=m.action==="analyze"?"detected":m.action;
+          $("#chips").innerHTML=m.action==="confirm"?`<span class="chip info">${esc(m.message)}: ${m.top.members.join(" / ").replace(/_/g," ")}</span>`:m.action==="fallback"?`<span class="chip warning">${esc(m.message)}</span>`:""}
+        if(m.type==="target_reached")toast("Target reached — end the set when ready.");
+        if(m.type==="unsupported"||m.type==="error"){toast(m.message)}
+        if(m.type==="set_saved"){if(L.saved)L.saved(m)}};
+      const draw=(lm)=>drawSkeleton($("#c"),lm);
+      L.src=$("#src").value==="demo"?await demoSource(ex.exercise_id,+$("#rp").value||5,$("#flt").value,draw,(lm,t)=>ws.readyState===1&&ws.send(JSON.stringify({type:"frame",t,landmarks:lm})))
+        :await cameraSource($("#v"),draw,(lm,t)=>ws.readyState===1&&ws.send(JSON.stringify({type:"frame",t,landmarks:lm})));
+      $("#stage").classList.toggle("mirror",$("#src").value==="camera");
+    })}
+  $("#end").onclick=guard(async()=>{
+    const kg=+$("#kg").value||0,reps=+$("#rp").value||0;$("#end").disabled=true;
+    if(ai&&L.ws&&L.ws.readyState===1){
+      await new Promise(res=>{L.saved=res;L.ws.send(JSON.stringify({type:"end_set",weight_kg:kg}));setTimeout(res,4000)});
+    }else{await api(`/api/sessions/${P.sess.id}/sets`,{method:"POST",body:{exercise:ex.exercise_name,reps,weight_kg:kg,set_number:cur.set}})}
+    const sm=L.last;leave();P.i++;
+    const nxt=P.queue[P.i];
+    if(nxt&&ex.rest_seconds)return rest(ex.rest_seconds,nxt,sm);runLive()})}
+function rest(sec,nxt,sm){
+  const root=$("#live-root");let t=sec;
+  root.innerHTML=`<div class="live" style="place-items:center;display:grid;text-align:center"><div><p class="mute">Rest</p><div style="font:800 7rem var(--disp)" id="t">${t}</div><p>Next: ${esc(nxt.ex.exercise_name)} — set ${nxt.set}/${nxt.of}</p><button class="primary" id="sk">Skip rest</button></div></div>`;
+  const go=()=>{clearInterval(iv);runLive()};const iv=setInterval(()=>{t--;$("#t").textContent=t;if(t<=0)go()},1000);$("#sk").onclick=go}
+async function finishSession(){
+  const P=S.plan;$("#live-root").innerHTML="";const s=await api(`/api/sessions/${P.sess.id}/finish`,{method:"POST"});S.plan=null;
+  $("#app").innerHTML=`<h1>Session complete.</h1><div class="grid g3"><div class="card stat"><b>${s.sets.length}</b><span>sets</span></div><div class="card stat"><b>${s.total_reps}</b><span>reps</span></div><div class="card stat"><b>${Math.round(s.volume_kg)}</b><span>kg volume</span></div><div class="card stat"><b>${s.avg_form_score??"–"}</b><span>avg form</span></div></div>
+  <div class="card" style="margin-top:1rem"><table><tr><th>Exercise</th><th>Reps</th><th>kg</th><th>Form</th></tr>${s.sets.map(x=>`<tr><td>${esc(x.exercise_name)} ${x.source==="manual"?'<span class="tag warn">manual</span>':""}</td><td>${x.reps}${x.partial_reps?` <span class="mute">(+${x.partial_reps} partial)</span>`:""}</td><td>${x.weight_kg}</td><td>${x.avg_form_score??"–"}</td></tr>`).join("")}</table></div>
+  <a href="#/progress"><button class="primary" style="margin-top:1rem">See progress</button></a>`}
+function drawSkeleton(cv,lm){
+  const w=cv.clientWidth||640,h=cv.clientHeight||480,dpr=devicePixelRatio||1;if(cv.width!==w*dpr){cv.width=w*dpr;cv.height=h*dpr}
+  const c=cv.getContext("2d");c.setTransform(dpr,0,0,dpr,0,0);c.clearRect(0,0,w,h);if(!lm)return;
+  const side=Math.min(w,h/0.75*0.75),ox=(w-side*4/3)/2,sx=side*4/3,sy=side; /* assume 4:3 frame, letterboxed like object-fit:contain */
+  const P=k=>{const v=lm[k];return v&&v[2]>.3?[ox+v[0]*sx,v[1]*(h>sy?sy:h)+(h-sy)/2]:null};
+  c.lineWidth=4;c.lineCap="round";c.strokeStyle="#6f92ffcc";BONES.forEach(([a,b])=>{const p=P(a),q=P(b);if(p&&q){c.beginPath();c.moveTo(...p);c.lineTo(...q);c.stroke()}});
+  c.fillStyle="#fff";Object.keys(MP).forEach(k=>{const p=P(k);if(p){c.beginPath();c.arc(p[0],p[1],4,0,7);c.fill()}})}
+async function demoSource(exid,reps,fault,draw,send){
+  const d=await api(`/api/demo/sequence?exercise=${exid==="auto"?"squat":exid}&reps=${Math.max(1,reps)}${fault?"&fault="+fault:""}`);
+  let i=0,stop=false;const t0=performance.now();
+  (function tick(){if(stop||i>=d.frames.length)return;const due=(performance.now()-t0)/1000;
+   while(i<d.frames.length&&d.timestamps[i]<=due){send(d.frames[i],d.timestamps[i]);draw(d.frames[i]);i++}requestAnimationFrame(tick)})();
+  return {stop:()=>stop=true}}
+let landmarker=null;
+async function cameraSource(video,draw,send){
+  const stream=await navigator.mediaDevices.getUserMedia({video:{width:640,height:480,facingMode:"user"},audio:false});video.srcObject=stream;video.hidden=false;await video.play();
+  if(!landmarker){const V=await import("https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14/vision_bundle.mjs");
+   const fs=await V.FilesetResolver.forVisionTasks("https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14/wasm");
+   landmarker=await V.PoseLandmarker.createFromOptions(fs,{baseOptions:{modelAssetPath:"https://storage.googleapis.com/mediapipe-models/pose_landmarker/pose_landmarker_lite/float16/latest/pose_landmarker_lite.task",delegate:"GPU"},runningMode:"VIDEO",numPoses:1})}
+  let stop=false,lastT=-1;
+  (function loop(){if(stop)return;if(video.currentTime!==lastT){lastT=video.currentTime;const r=landmarker.detectForVideo(video,performance.now());
+    const p=r.landmarks?.[0];if(p){const lm={};for(const[k,i]of Object.entries(MP))lm[k]=[p[i].x,p[i].y,p[i].visibility??1];draw(lm);send(lm,performance.now()/1000)}else draw(null)}
+   video.requestVideoFrameCallback?video.requestVideoFrameCallback(loop):requestAnimationFrame(loop)})();
+  return {stop:()=>{stop=true;stream.getTracks().forEach(t=>t.stop())},grab:()=>{const r=landmarker.detectForVideo(video,performance.now()).landmarks?.[0];if(!r)return null;const lm={};for(const[k,i]of Object.entries(MP))lm[k]=[r[i].x,r[i].y,r[i].visibility??1];return lm}}}
+
+/* ---------- progress ---------- */
+async function Progress(){
+  $("#app").innerHTML=`<h1>Progress</h1><div class="row" role="tablist" id="tabs">${["today","week","month"].map(r=>`<button data-r="${r}" role="tab">${r[0].toUpperCase()+r.slice(1)}</button>`).join("")}</div><div id="pv" style="margin-top:1rem"></div>`;
+  const show=guard(async r=>{$$("#tabs button").forEach(b=>{b.classList.toggle("primary",b.dataset.r===r);b.setAttribute("aria-selected",b.dataset.r===r)});
+   const p=await api("/api/progress?range="+r),mx=Math.max(1,...Object.values(p.muscle_sets));
+   $("#pv").innerHTML=`<div class="grid g3"><div class="card stat"><b>${p.workouts}</b><span>workouts · ${p.days_trained} training days</span></div><div class="card stat"><b>${p.reps}</b><span>reps in ${p.sets} sets</span></div><div class="card stat"><b>${Math.round(p.volume_kg).toLocaleString()}</b><span>kg volume</span></div><div class="card stat"><b>${p.avg_form_score??"–"}</b><span>form consistency</span></div><div class="card stat"><b>${p.avg_rom!=null?Math.round(p.avg_rom*100)+"%":"–"}</b><span>avg range of motion</span></div><div class="card stat"><b>${Math.round(p.consistency*100)}%</b><span>of weekly target</span></div></div>
+   ${r!=="today"?`<div class="grid g2" style="margin-top:1rem"><div class="card"><h3>Volume</h3>${bars(p.series,"volume_kg")}</div><div class="card"><h3>Reps</h3>${bars(p.series,"reps")}</div></div>`:""}
+   <div class="grid g2" style="margin-top:1rem"><div class="card"><h3>Muscle groups (sets)</h3>${Object.entries(p.muscle_sets).map(([m,n])=>`<div class="row between small"><span>${esc(m)}</span><span class="mute">${n}</span></div><div class="meter"><i style="width:${n/mx*100}%"></i></div>`).join("")||`<p class="mute">No analysed sets yet.</p>`}</div>
+   <div class="card"><h3>Personal bests</h3><table>${Object.entries(p.personal_bests).map(([k,v])=>`<tr><td>${esc(k)}</td><td>${v.max_weight_kg}kg</td><td class="mute">${v.max_reps} reps</td></tr>`).join("")||`<tr><td class="mute">Nothing logged.</td></tr>`}</table></div></div>
+   ${p.unsupported_sets?`<p class="small mute" style="margin-top:1rem">${p.unsupported_sets} set(s) were tracked manually, without AI analysis.</p>`:""}`});
+  window.$$=s=>[...document.querySelectorAll(s)];$("#tabs").onclick=e=>e.target.dataset.r&&show(e.target.dataset.r);show("week")}
+const $$=s=>[...document.querySelectorAll(s)];
+
+/* ---------- profile & calibration ---------- */
+async function Profile(){
+  const p=await api("/api/profile"),goals={build_muscle:"Build muscle",get_stronger:"Get stronger",improve_fitness:"Improve fitness",lose_weight:"Lose weight",consistency:"Improve consistency",movement_quality:"Improve movement quality"};
+  $("#app").innerHTML=`<h1>Profile</h1><div class="grid g2"><div class="card"><h2>Goal</h2><label for="goal">What are you training for?</label><select id="goal"><option value="">Not set</option>${Object.entries(goals).map(([k,v])=>`<option value="${k}" ${S.user.goal===k?"selected":""}>${v}</option>`).join("")}</select>
+   <label for="wt">Workouts per week</label><input id="wt" type="number" min="1" max="14" value="${S.user.weekly_target}"><button class="primary" id="sv" style="margin-top:1rem">Save</button></div>
+  <div class="card"><h2>Movement calibration</h2>${p.calibrated?`<p><span class="tag good">Calibrated</span></p><p class="small mute">Segment ratios (vs torso): ${Object.entries(p.ratios).map(([k,v])=>`${k.replace("_"," ")} ${v}`).join(" · ")}</p>`:`<p class="mute">Calibrating lets us judge your movement against your own proportions.</p>`}
+   <label for="ht">Height (cm)</label><input id="ht" type="number" min="100" max="250" value="${p.profile.height_cm||""}"><div class="row" style="margin-top:.8rem"><button class="primary" id="cam">Calibrate with camera</button><button id="dmo">Use demo body</button></div>
+   <p class="small mute" style="margin-top:.7rem">Stand where your whole body is visible, arms relaxed. This is an approximate proportion model used for normalisation, not an anatomical scan.</p><div id="cs"></div></div></div>
+  <div class="card" style="margin-top:1rem"><h2>Your baselines</h2>${Object.entries(p.baselines).map(([k,b])=>`<div class="row between"><span>${esc(k.replace(/_/g," "))}</span><span class="mute small">${b.n} reps · usual range ${Math.round(b.mean.peak_progress*100)}% · ${b.mean.duration.toFixed(1)}s/rep</span></div>`).join("")||`<p class="mute">Baselines build as you train.</p>`}</div>
+  <div class="card" style="margin-top:1rem"><h3>Privacy</h3><p class="small mute">Video is analysed in your browser and never stored; only pose landmarks and set summaries are sent. You can erase everything at any time.</p><button id="del" class="ghost" style="color:var(--bad)">Delete my account and data</button></div>`;
+  $("#sv").onclick=guard(async()=>{S.user=await api("/api/auth/me",{method:"PATCH",body:{goal:$("#goal").value||null,weekly_target:+$("#wt").value}});toast("Saved")});
+  const submit=guard(async frames=>{const r=await api("/api/profile/calibrate",{method:"POST",body:{height_cm:+$("#ht").value||null,frames}});toast("Calibrated ("+Math.round(r.quality*100)+"% stable)");Profile()});
+  $("#dmo").onclick=guard(async()=>submit((await api("/api/demo/standing?n=40")).frames));
+  $("#cam").onclick=guard(async()=>{const v=document.createElement("video");v.playsInline=true;v.muted=true;v.style.cssText="width:100%;border-radius:12px;margin-top:.8rem;transform:scaleX(-1)";$("#cs").replaceChildren(v);
+   const cs=await cameraSource(v,()=>{},()=>{});const frames=[];let tries=0;
+   $("#cs").append(Object.assign(document.createElement("p"),{className:"small",textContent:"Hold still for a few seconds…"}));
+   const iv=setInterval(async()=>{const f=cs.grab();if(f)frames.push(f);if(frames.length>=30||++tries>120){clearInterval(iv);cs.stop();await submit(frames)}},100)});
+  $("#del").onclick=guard(async()=>{if(confirm("This permanently deletes your account, workouts and history.")){await api("/api/auth/me",{method:"DELETE"});S.token=null;localStorage.removeItem("tok");location.hash="";route()}})}
+
+/* ---------- admin console ---------- */
+async function Admin(){
+  const [o,rq,ms]=await Promise.all([api("/api/admin/overview"),api("/api/admin/requests"),api("/api/admin/models")]);
+  const st=["new","triaged","planned","collecting","shipped","declined"];
+  $("#app").innerHTML=`<h1>Console</h1><div class="grid g3">${[["users",o.users],["sessions",o.sessions],["AI sets",o.ai_sets],["supported exercises",o.supported_exercises],["open requests",o.open_requests],["unsupported rate",Math.round(o.metrics.unsupported_exercise_rate*100)+"%"]].map(([k,v])=>`<div class="card stat"><b>${v}</b><span>${k}</span></div>`).join("")}</div>
+  <div class="card" style="margin-top:1rem"><h2>Most-requested unsupported exercises</h2><table><tr><th>Exercise</th><th>Requests</th><th>Users</th><th>Likely pattern</th><th>Closest supported</th><th>Status</th></tr>${rq.map(r=>`<tr><td>${esc(r.name)}</td><td>${r.requests}</td><td>${r.distinct_users}</td><td>${esc(r.candidate_pattern||"?")}</td><td class="small mute">${r.closest_supported.map(esc).join(", ")}</td><td><select data-r="${r.id}" aria-label="Status for ${esc(r.name)}">${st.map(s=>`<option ${s===r.status?"selected":""}>${s}</option>`).join("")}</select></td></tr>`).join("")||`<tr><td class="mute" colspan="6">No requests yet.</td></tr>`}</table></div>
+  <div class="card" style="margin-top:1rem"><h2>Model registry</h2><table><tr><th>Model</th><th>Dataset</th><th>Status</th><th>Key metrics</th><th></th></tr>${ms.map(m=>`<tr><td><b>${esc(m.name)}</b> v${m.version}<div class="small mute">${esc(m.kind)}</div></td><td class="small">${esc(m.dataset_version)}</td><td><span class="tag ${m.status==="production"?"good":""}">${m.status}</span></td><td class="small mute">${Object.entries(m.metrics).map(([k,v])=>`${esc(k)}: ${esc(typeof v==="number"?+v.toFixed(3):v)}`).join("<br>")}<div style="margin-top:.3rem">${esc(m.limitations)}</div></td><td>${m.status==="candidate"?`<button data-p="${m.id}">Promote</button>`:""}</td></tr>`).join("")}</table><p class="small mute" id="gate"></p></div>
+  <div class="card" style="margin-top:1rem"><h2>Add an exercise (definition JSON)</h2><p class="small mute">Exercises are data. Validate, then add — it's live immediately, no deploy.</p><textarea id="dj" rows="10" spellcheck="false" style="font-family:ui-monospace,Menlo,monospace;font-size:.82rem" placeholder="Paste an ExerciseDefinition…"></textarea><div class="row" style="margin-top:.6rem"><button id="dv">Validate</button><button class="primary" id="da">Add exercise</button></div><pre id="dr" class="small"></pre></div>`;
+  $("#app").onchange=guard(async e=>{if(e.target.dataset.r){await api("/api/admin/requests/"+e.target.dataset.r,{method:"PATCH",body:{status:e.target.value}});toast("Updated")}});
+  $("#app").onclick=async e=>{const id=e.target.dataset.p;if(!id)return;try{const r=await api(`/api/admin/models/${id}/promote`,{method:"POST",body:{}});toast("Promoted");Admin()}catch(er){$("#gate").innerHTML="<b>Blocked:</b> "+esc(er.message)}};
+  const dj=()=>{try{return JSON.parse($("#dj").value)}catch{toast("Not valid JSON");return null}};
+  $("#dv").onclick=guard(async()=>{const d=dj();if(!d)return;const r=await api("/api/admin/exercises/validate",{method:"POST",body:{definition:d}});$("#dr").textContent=r.valid?"Valid. "+r.notes.join(" "):r.errors.join("\n")});
+  $("#da").onclick=guard(async()=>{const d=dj();if(!d)return;const r=await api("/api/admin/exercises",{method:"POST",body:{definition:d}});S.ex=null;$("#dr").textContent="Added: "+r.id})}
+route();
+</script>
+</body>
+</html>

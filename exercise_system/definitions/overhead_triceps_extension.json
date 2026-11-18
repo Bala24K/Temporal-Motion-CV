@@ -1,0 +1,126 @@
+{
+  "id": "overhead_triceps_extension",
+  "name": "Overhead Triceps Extension",
+  "aliases": [
+    "triceps extension",
+    "overhead tricep extension",
+    "french press"
+  ],
+  "family": "elbow_extension",
+  "movement_patterns": [
+    "extension"
+  ],
+  "target_muscles": [
+    "triceps"
+  ],
+  "secondary_muscles": [
+    "shoulders"
+  ],
+  "primary_joints": [
+    "elbow"
+  ],
+  "equipment": [
+    "dumbbell",
+    "cable"
+  ],
+  "body_position": "standing",
+  "difficulty": "beginner",
+  "camera": {
+    "supported_views": [
+      "side",
+      "45deg",
+      "front"
+    ],
+    "preferred": "side",
+    "full_body": false,
+    "notes": ""
+  },
+  "required_joints": [
+    "left_shoulder",
+    "right_shoulder",
+    "left_elbow",
+    "right_elbow",
+    "left_wrist",
+    "right_wrist",
+    "left_hip",
+    "right_hip"
+  ],
+  "rep": {
+    "signal": {
+      "primitive": "joint_angle",
+      "joints": [
+        "shoulder",
+        "elbow",
+        "wrist"
+      ],
+      "side": "mean"
+    },
+    "rest": 40,
+    "peak": 168,
+    "toward_peak_phase": "concentric"
+  },
+  "form_rules": [
+    {
+      "id": "rom",
+      "type": "rom",
+      "min": 0.85,
+      "max": null,
+      "severity": "warn",
+      "good": "Full extension",
+      "bad": "Extend fully at the top"
+    },
+    {
+      "id": "tempo",
+      "type": "tempo",
+      "min_phase_seconds": 0.6,
+      "severity": "warn",
+      "good": "Controlled tempo",
+      "bad": "Slow down - control both halves of the rep"
+    },
+    {
+      "id": "upper_arm_still",
+      "type": "stability",
+      "signal": {
+        "primitive": "segment_vertical_angle",
+        "joints": [
+          "shoulder",
+          "elbow"
+        ],
+        "side": "mean"
+      },
+      "max": 15,
+      "severity": "warn",
+      "good": "Upper arms stay still",
+      "bad": "Keep your upper arms still"
+    },
+    {
+      "id": "no_lean",
+      "type": "limit",
+      "signal": {
+        "primitive": "trunk_lean"
+      },
+      "max": 10,
+      "min": null,
+      "severity": "warn",
+      "good": "Torso stays upright",
+      "bad": "Avoid arching your back"
+    }
+  ],
+  "posture": [
+    {
+      "signal": {
+        "primitive": "segment_vertical_angle",
+        "joints": [
+          "shoulder",
+          "elbow"
+        ],
+        "side": "mean"
+      },
+      "stat": "median",
+      "min": 150,
+      "max": null,
+      "scale": 30
+    }
+  ],
+  "motion_plane": "sagittal"
+}

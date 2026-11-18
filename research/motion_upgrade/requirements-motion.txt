@@ -1,0 +1,12 @@
+# Additions for the motion/ package. Append to requirements.txt.
+#
+# torch: CPU build is sufficient — the model is small (J=15) and the async
+# runtime keeps inference off the capture thread. Install from the CPU index
+# to avoid pulling ~2.5 GB of CUDA wheels you will not use:
+#   pip install torch --index-url https://download.pytorch.org/whl/cpu
+torch>=2.2
+
+# ONNX export and benchmarking. Only needed for motion/export.py, and only
+# after profiling shows the recognition model is the actual bottleneck.
+onnx>=1.15
+onnxruntime>=1.17

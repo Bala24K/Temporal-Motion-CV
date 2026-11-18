@@ -1,0 +1,49 @@
+name: ci
+on: [push, pull_request]
+jobs:
+  python:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12", cache: pip }
+      - run: pip install -r requirements-dev.txt
+      - run: pip install torch --index-url https://download.pytorch.org/whl/cpu   # enables tests/test_torch_encoder.py (otherwise skipped)
+      - run: python -m pytest -q
+      - name: Every exercise definition validates
+        run: python -c "from exercise_system.registry import ExerciseRegistry as R; print(len(R.load().all()), 'definitions OK')"
+  web:
+    runs-on: ubuntu-latest
+    defaults: { run: { working-directory: web } }
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: npm, cache-dependency-path: web/package-lock.json }
+      - run: npm ci --no-audit --no-fund
+      - run: npm run typecheck
+      - run: NEXT_TELEMETRY_DISABLED=1 npm run build
+      - uses: actions/upload-artifact@v4
+        with: { name: web-out, path: web/out }
+  e2e:
+    needs: web
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12", cache: pip }
+      - uses: actions/download-artifact@v4
+        with: { name: web-out, path: web/out }
+      - run: pip install -r requirements-dev.txt && python -m playwright install --with-deps chromium
+      - name: "Train the ONNX recognizer used for consensus mode (synthetic data, plumbing only)"
+        run: python -m ml.train_recognizer out/recognizer.onnx
+      - name: Run server and the browser end-to-end test
+        env: { RECOGNIZER_MODE: consensus, RECOGNIZER_ONNX: out/recognizer.onnx, ADMIN_EMAILS: admin@example.com, SECRET_KEY: ci, DATABASE_URL: "sqlite:////tmp/ci.db" }
+        run: |
+          uvicorn backend.main:app --port 8765 & 
+          for i in $(seq 1 20); do curl -sf localhost:8765/api/health && break; sleep 1; done
+          python scripts/e2e_web.py http://localhost:8765
+  docker:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: docker build -t kinetic .

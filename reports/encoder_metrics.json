@@ -1,0 +1,10 @@
+{
+  "subject_disjoint_accuracy": 0.7777777777777778,
+  "macro_f1": 0.7777777777777778,
+  "conformal_coverage": 0.9166666666666666,
+  "id_ood_false_flag_rate": 0.0,
+  "n_train_clips": 54,
+  "n_test_clips": 9,
+  "label_source": "synthetic",
+  "onnx_parity_max_err": 8.940696716308594e-08
+}

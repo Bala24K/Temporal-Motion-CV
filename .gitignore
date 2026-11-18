@@ -1,0 +1,15 @@
+__pycache__/
+*.pyc
+.pytest_cache/
+*.db
+.env
+out/
+runs/
+models/
+data/*
+!data/.gitignore
+web/node_modules/
+web/.next/
+web/next-env.d.ts
+*.tsbuildinfo
+web/public/build-info.json

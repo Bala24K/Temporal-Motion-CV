@@ -1,0 +1,24 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg: #eef1f4; --surface: #ffffff; --raise: #f6f8fa; --ink: #13202b; --mute: #5b6a78; --line: #dbe1e7;
+  --brand: #2b55f5; --brand-ink: #ffffff; --good: #14895c; --warn: #b36a0b; --bad: #c93c3c;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0d151d; --surface: #15202b; --raise: #1b2836; --ink: #e8eef4; --mute: #93a3b2; --line: #263544;
+    --brand: #6f92ff; --brand-ink: #0b1220; --good: #3fcf93; --warn: #f0a646; --bad: #ff7a7a;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0d151d; --surface: #15202b; --raise: #1b2836; --ink: #e8eef4; --mute: #93a3b2; --line: #263544;
+  --brand: #6f92ff; --brand-ink: #0b1220; --good: #3fcf93; --warn: #f0a646; --bad: #ff7a7a;
+}
+html, body { background: var(--bg); color: var(--ink); }
+body { font-family: var(--font-sans, "Figtree", "Segoe UI", system-ui, sans-serif); padding: env(safe-area-inset-top) 0 env(safe-area-inset-bottom); -webkit-font-smoothing: antialiased; }
+h1, h2, h3 { font-family: "Bricolage Grotesque", "Avenir Next", "Segoe UI", system-ui, sans-serif; letter-spacing: -0.02em; }
+:focus-visible { outline: 3px solid var(--brand); outline-offset: 2px; }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; } }
+.live-count { font-size: min(26vw, 13rem); line-height: 0.9; letter-spacing: -0.05em; }

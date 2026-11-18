@@ -1,0 +1,235 @@
+{
+  "title": "Kinetic - movement pipeline",
+  "uid": "kinetic-main",
+  "schemaVersion": 39,
+  "version": 1,
+  "refresh": "30s",
+  "time": {
+    "from": "now-6h",
+    "to": "now"
+  },
+  "panels": [
+    {
+      "id": 1,
+      "type": "timeseries",
+      "title": "Server frame processing (ms)",
+      "gridPos": {
+        "x": 0,
+        "y": 0,
+        "w": 12,
+        "h": 8
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "ms"
+        },
+        "overrides": []
+      },
+      "targets": [
+        {
+          "expr": "fitness_latency_ms{op=\"frame_process\",q=\"p50\"}",
+          "legendFormat": "p50",
+          "refId": "A"
+        },
+        {
+          "expr": "fitness_latency_ms{op=\"frame_process\",q=\"p95\"}",
+          "legendFormat": "p95",
+          "refId": "B"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "type": "timeseries",
+      "title": "Client pose latency (ms)",
+      "gridPos": {
+        "x": 12,
+        "y": 0,
+        "w": 12,
+        "h": 8
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "ms"
+        },
+        "overrides": []
+      },
+      "targets": [
+        {
+          "expr": "fitness_latency_ms{op=\"client_pose_ms\",q=\"p50\"}",
+          "legendFormat": "p50",
+          "refId": "A"
+        },
+        {
+          "expr": "fitness_latency_ms{op=\"client_pose_ms\",q=\"p95\"}",
+          "legendFormat": "p95",
+          "refId": "B"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "type": "timeseries",
+      "title": "Client camera FPS",
+      "gridPos": {
+        "x": 0,
+        "y": 8,
+        "w": 12,
+        "h": 8
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "targets": [
+        {
+          "expr": "fitness_latency_ms{op=\"client_camera_fps\",q=\"p50\"}",
+          "legendFormat": "p50",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "type": "timeseries",
+      "title": "End-to-end (send -> feedback, ms)",
+      "gridPos": {
+        "x": 12,
+        "y": 8,
+        "w": 12,
+        "h": 8
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "ms"
+        },
+        "overrides": []
+      },
+      "targets": [
+        {
+          "expr": "fitness_latency_ms{op=\"client_e2e_ms\",q=\"p50\"}",
+          "legendFormat": "p50",
+          "refId": "A"
+        },
+        {
+          "expr": "fitness_latency_ms{op=\"client_e2e_ms\",q=\"p95\"}",
+          "legendFormat": "p95",
+          "refId": "B"
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "type": "timeseries",
+      "title": "Unsupported-exercise rate",
+      "gridPos": {
+        "x": 0,
+        "y": 16,
+        "w": 12,
+        "h": 8
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percentunit"
+        },
+        "overrides": []
+      },
+      "targets": [
+        {
+          "expr": "fitness_exercise_unsupported_total / clamp_min(fitness_exercise_resolve_total, 1)",
+          "legendFormat": "unsupported",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "type": "timeseries",
+      "title": "Recognizer disagreement",
+      "gridPos": {
+        "x": 12,
+        "y": 16,
+        "w": 12,
+        "h": 8
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percentunit"
+        },
+        "overrides": []
+      },
+      "targets": [
+        {
+          "expr": "fitness_recognizer_disagree_total / clamp_min(fitness_recognizer_agree_total + fitness_recognizer_disagree_total, 1)",
+          "legendFormat": "disagree",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "type": "timeseries",
+      "title": "API latency (ms)",
+      "gridPos": {
+        "x": 0,
+        "y": 24,
+        "w": 12,
+        "h": 8
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "ms"
+        },
+        "overrides": []
+      },
+      "targets": [
+        {
+          "expr": "fitness_latency_ms{op=\"http\",q=\"p50\"}",
+          "legendFormat": "p50",
+          "refId": "A"
+        },
+        {
+          "expr": "fitness_latency_ms{op=\"http\",q=\"p95\"}",
+          "legendFormat": "p95",
+          "refId": "B"
+        }
+      ]
+    },
+    {
+      "id": 8,
+      "type": "timeseries",
+      "title": "Frames processed / recognizer locks",
+      "gridPos": {
+        "x": 12,
+        "y": 24,
+        "w": 12,
+        "h": 8
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "targets": [
+        {
+          "expr": "rate(fitness_frames_total[5m])",
+          "legendFormat": "frames/s",
+          "refId": "A"
+        },
+        {
+          "expr": "rate(fitness_recognition_locked_total[5m])",
+          "legendFormat": "locks/s",
+          "refId": "B"
+        },
+        {
+          "expr": "rate(fitness_recognition_unsupported_total[5m])",
+          "legendFormat": "unsupported/s",
+          "refId": "C"
+        }
+      ]
+    }
+  ]
+}

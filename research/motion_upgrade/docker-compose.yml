@@ -1,0 +1,31 @@
+# Motion ST-GCN Inference Service — Docker Compose
+#
+# Start:   docker compose up
+# Stop:    docker compose down
+# Logs:    docker compose logs -f
+# Health:  curl http://localhost:8000/health
+
+services:
+  motion-inference:
+    build:
+      context: ..
+      dockerfile: motion-upgrade/Dockerfile
+    container_name: motion-stgcn-inference
+    ports:
+      - "${API_PORT:-8000}:8000"
+    environment:
+      - MODEL_PATH=${MODEL_PATH:-/app/motion-upgrade/models/motion_stgcn_best.pt}
+      - API_HOST=0.0.0.0
+      - API_PORT=8000
+      - LOG_LEVEL=${LOG_LEVEL:-info}
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 2G
