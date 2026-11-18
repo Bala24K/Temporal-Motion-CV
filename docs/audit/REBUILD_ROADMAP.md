@@ -178,6 +178,23 @@ M1 Trustworthy input ──► M2 Calibration v2 ──► M3 Counter v2 (squat,
 
 **Regression tests:** protocol contract tests (server ↔ client schemas), reconnect E2E, switch-and-save E2E.
 
+**Status (2026-11-18): implemented. The vertical slice is complete in software.** Tests: `RT/tests/test_m4_session.py` (34 tests, including 20 forced mid-set drops). Browser E2E passes, including a mid-set socket drop with reps preserved, the empty-set prompt, history and workout editing.
+
+| Item | State | Notes |
+| --- | --- | --- |
+| Typed protocol | Done | `backend/protocol.py` (Pydantic): client messages validated on arrival (malformed -> `error`/`bad_message`, connection survives); every server message in a full flow validated in tests. `web/lib/protocol.ts` is generated (`python scripts/gen_protocol_ts.py`); a test fails if it drifts. JSON Schema -> TS translation is dependency-free (no zod added) |
+| Token out of the URL | Done | First message `{"type":"auth"}`; server replies `ready`. `?token=` is still accepted for scripts/tests (legacy) |
+| Reconnect and resume | Done | Sets are owned by a `LiveSet`, not the socket. A drop parks the set for 120 s; reconnecting with the same `set_key` resumes it (or takes over a half-open socket). The client retries with backoff for ~60 s and shows "Reconnecting… your reps are kept" |
+| End set when offline | Done | `POST /api/live/sets/{set_key}/end` finishes a parked set; the client falls back to it automatically. Acceptance: 20/20 forced drops saved with every counted rep |
+| Exercise change saves the set | Done (since M1) | Switch is still allowed mid-set; the previous set is saved first |
+| State throttling | Done | `?state_hz=15` (web client): state at most 15/s, but events (rep, phase, tracking, set complete, range capture, quality) are always sent at once. Client coalesces renders to one per animation frame |
+| Recognition off the event loop | Done | `asyncio.to_thread`; a test asserts the recognizer never runs on the loop |
+| Empty AI set | Done | `set_saved.empty`; the UI asks "Log it manually / Discard" instead of dropping it |
+| History page | Done | `/history`: sessions, sets, per-rep depth strip with failed checks; `GET /api/sessions/{id}` includes per-rep evidence (the list stays light) |
+| Workout editing | Done | Edit/Save changes via `PUT /api/workouts/{id}`; rest-seconds field |
+| Event-loop budget (no task > 10 ms under 2 clients) | **Partly verified** | Recognition (the ~14 ms task) is off the loop; per-frame processing measured at 0.41 ms p50. A 10-minute 2-client load test was not run |
+| Parked sets across server restarts / multiple replicas | **Not done** | In-process registry (single process). Needs Redis or a DB table if you run more than one API worker |
+
 **→ Vertical slice complete.**
 
 ---

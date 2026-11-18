@@ -59,6 +59,8 @@ function SetScreen({ sessionId, cur, onFinished, onLeave }: { sessionId: number;
   const [exerciseId, setExerciseId] = useState(item.exercise_id && item.exercise_id !== "auto" ? item.exercise_id : "");
   const options = useExerciseOptions();
   const [recordOn, setRecordOn] = useState(false);
+  // after End set: "empty" = no reps detected, "failed" = could not save automatically -> offer manual logging
+  const [askManual, setAskManual] = useState<null | "empty" | "failed">(null);
   const [weight, setWeight] = useState(item.weight_kg), [reps, setReps] = useState(item.reps);
   const [running, setRunning] = useState(false), [busy, setBusy] = useState(false);
   const mirror = source === "camera";
@@ -67,7 +69,7 @@ function SetScreen({ sessionId, cur, onFinished, onLeave }: { sessionId: number;
   // auto-detect locked onto an exercise: show it in the selector instead of "Auto-detect"
   useEffect(() => { const ex = live.state?.exercise; if (exerciseId === "auto" && ex && ex !== "auto") setExerciseId(ex); }, [live.state?.exercise]); // eslint-disable-line react-hooks/exhaustive-deps
   // connection dropped mid-set: prefill the manual log with what was counted so far
-  useEffect(() => { if (live.lost && live.state) setReps(live.state.reps); }, [live.lost]); // eslint-disable-line react-hooks/exhaustive-deps // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => { if (askManual && live.state) setReps(live.state.reps); }, [askManual]); // eslint-disable-line react-hooks/exhaustive-deps
   useEffect(() => { if (!running) return; const id = setInterval(() => { const s = src.current?.stats(); if (s) live.sendStats(s.cameraFps, s.poseMs); }, 2000); return () => clearInterval(id); }, [running]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const start = async () => {
@@ -84,11 +86,17 @@ function SetScreen({ sessionId, cur, onFinished, onLeave }: { sessionId: number;
     setBusy(true);
     try {
       if (recordOn) live.stopRecording({ source, exercise_selected: exerciseId });
-      if (ai && running && !live.lost) { src.current?.stop(); await live.endSet(weight); }
-      else await api(`/api/sessions/${sessionId}/sets`, { method: "POST", body: { exercise: options.find(([id]) => id === exerciseId)?.[1] || item.exercise_name, reps, weight_kg: weight, set_number: cur.set } });
+      if (ai && running && !askManual) {
+        src.current?.stop();
+        const r = await live.endSet(weight);
+        if (!r || (r.empty && !r.saved)) { setAskManual(r ? "empty" : "failed"); setBusy(false); return; }
+      } else await logManual();
       live.close(); onFinished();
     } catch (e) { toastError(e); setBusy(false); }
   };
+
+  const logManual = () => api(`/api/sessions/${sessionId}/sets`, { method: "POST", body: { exercise: options.find(([id]) => id === exerciseId)?.[1] || item.exercise_name, reps, weight_kg: weight, set_number: cur.set } });
+  const discard = () => { live.close(); onFinished(); };
 
   const s = live.state;
   return (
@@ -120,6 +128,7 @@ function SetScreen({ sessionId, cur, onFinished, onLeave }: { sessionId: number;
         </div>
         {!ai && <div className="absolute inset-x-4 top-4"><Notice><b>Manual tracking.</b> Reliable AI analysis isn&apos;t available for this exercise yet — log your set below.</Notice></div>}
         {s && (!s.quality.ok || s.tracking !== "ok") && s.quality.message && <div className="absolute left-1/2 top-3 -translate-x-1/2 rounded-full bg-warn px-4 py-1.5 text-sm font-semibold text-black" role="alert">{s.quality.message}</div>}
+        {live.reconnecting && <div className="absolute left-1/2 top-3 z-10 -translate-x-1/2 rounded-full bg-white/15 px-4 py-1.5 text-sm font-semibold backdrop-blur" role="status">Reconnecting… your reps are kept</div>}
         {s && s.tracking === "degraded" && s.quality.ok && <div className="absolute left-1/2 top-3 -translate-x-1/2 rounded-full bg-white/15 px-4 py-1.5 text-sm font-semibold backdrop-blur" role="status">Tracking weak - keep your whole body in view</div>}
         {s && !s.view_ok && s.view_hint && <div className="absolute inset-x-4 top-14 mx-auto w-fit max-w-full rounded-2xl bg-black/60 px-4 py-2 text-center text-sm backdrop-blur" role="status">{s.view_hint}</div>}
         {ai && running && s && (
@@ -171,8 +180,10 @@ function SetScreen({ sessionId, cur, onFinished, onLeave }: { sessionId: number;
           </div>) : <span />}
         <div className="flex items-center gap-2 text-sm [&_input]:w-20 [&_input]:bg-[#15202b] [&_input]:text-[#eef3f8]">
           <label htmlFor="kg">kg</label><Input id="kg" type="number" min={0} step={0.5} value={weight} onChange={(e) => setWeight(+e.target.value)} />
-          {(!ai || live.lost) && <><label htmlFor="rp">reps</label><Input id="rp" type="number" min={0} value={reps} onChange={(e) => setReps(+e.target.value)} /></>}
-          <Button variant="primary" disabled={busy} onClick={end}>{ai && !live.lost ? "End set" : "Log set"}</Button>
+          {askManual && <span className="text-[#f0a646]" role="alert">{askManual === "empty" ? "No reps were detected." : "Couldn't save automatically."} Log it manually?</span>}
+          {(!ai || askManual) && <><label htmlFor="rp">reps</label><Input id="rp" type="number" min={0} value={reps} onChange={(e) => setReps(+e.target.value)} /></>}
+          {askManual && <Button variant="ghost" className="text-[#eef3f8]" disabled={busy} onClick={discard}>Discard</Button>}
+          <Button variant="primary" disabled={busy} onClick={end}>{ai && !askManual ? "End set" : "Log set"}</Button>
         </div>
       </footer>
     </>);

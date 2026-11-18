@@ -9,7 +9,7 @@ import type { User } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { Skeleton } from "./ui/primitives";
 
-const LINKS = [["/", "Home"], ["/workout/", "Workout"], ["/exercises/", "Exercises"], ["/progress/", "Progress"], ["/nutrition/", "Nutrition"], ["/profile/", "Profile"]];
+const LINKS = [["/", "Home"], ["/workout/", "Workout"], ["/exercises/", "Exercises"], ["/history/", "History"], ["/progress/", "Progress"], ["/nutrition/", "Nutrition"], ["/profile/", "Profile"]];
 
 export function Shell({ children }: { children: ReactNode }) {
   const { token, ready, user, setSession, clear } = useAuth();

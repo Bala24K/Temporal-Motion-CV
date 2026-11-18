@@ -1,3 +1,4 @@
+import type { RecognitionOut, StateOut } from "./protocol";
 /** Landmark frame (see motion_engine/skeleton.py IMAGE_KEY): joint -> [x/width, y/height, visibility], plus
  *  `_image: [width, height]` of the source image so the server can undo the per-axis normalisation. */
 export type Landmarks = Record<string, number[]>;
@@ -6,14 +7,10 @@ export interface Exercise { id: string; name: string; family: string; difficulty
   equipment: string[]; movement_patterns: string[]; camera: { preferred: string; supported_views: string[]; notes: string }; form_checks?: string[] }
 export interface WorkoutItem { id: number; exercise_id: string | null; exercise_name: string; sets: number; reps: number; weight_kg: number; rest_seconds: number; ai_analysis: boolean; target_muscles: string[] }
 export interface Workout { id: number; name: string; notes: string; items: WorkoutItem[]; muscles: string[]; unsupported_count: number }
-export interface SetOut { id: number; exercise_name: string; set_number: number; reps: number; partial_reps: number; weight_kg: number; avg_form_score: number | null; source: string }
-export interface SessionOut { id: number; name: string; duration_minutes: number; sets: SetOut[]; total_reps: number; volume_kg: number; avg_form_score: number | null }
+export interface SetOut { id: number; exercise_id?: string | null; exercise_name: string; set_number: number; reps: number; partial_reps: number; weight_kg: number; avg_form_score: number | null;
+  avg_rom?: number | null; avg_rep_seconds?: number | null; source: string; created_at?: string | null; reps_detail?: RepDetail[] }
+export interface SessionOut { id: number; name: string; started_at: string; finished_at: string | null; duration_minutes: number; sets: SetOut[]; total_reps: number; volume_kg: number; avg_form_score: number | null }
 export interface Feedback { status: "good" | "warning" | "info"; message: string; rule: string }
-export interface LiveState { type: "state"; exercise: string; reps: number; target_reps: number | null; partial_reps: number; abandoned_reps: number; phase: string; progress: number;
-  quality: { ok: boolean; message: string | null }; feedback: Feedback[]; set_complete: boolean;
-  tracking: "ok" | "degraded" | "lost"; view: "front" | "side" | "45deg" | null; view_ok: boolean; view_hint: string | null;
-  personal_range: { rest: number; peak: number } | null; range_capture: boolean }
-export interface Recognition { type: "recognition"; status: string; action: "analyze" | "confirm" | "fallback" | "wait"; confidence: number; message: string; top: { exercise: string; members: string[] } | null }
 export interface Progress { range: string; workouts: number; sets: number; reps: number; volume_kg: number; active_minutes: number; avg_form_score: number | null; avg_rom: number | null;
   days_trained: number; weekly_target: number; consistency: number; muscle_sets: Record<string, number>; muscle_share: Record<string, number>;
   personal_bests: Record<string, { max_weight_kg: number; max_reps: number }>; series: { date: string; volume_kg: number; reps: number; form: number | null }[]; unsupported_sets: number }
@@ -34,3 +31,9 @@ export interface Targets { bmr: number; maintenance_kcal: number; target_kcal: n
 export interface DaySummary { day: string; entries: FoodEntry[]; totals: { kcal: number; protein_g: number; carbs_g: number; fat_g: number }; targets: Targets | null; remaining_kcal: number | null;
   exercise_expenditure_estimate: { kcal_low: number; kcal_mid: number; kcal_high: number; weight_assumed: boolean } }
 export interface ModelVersion { id: number; kind: string; name: string; version: number; dataset_version: string; status: string; metrics: Record<string, unknown>; limitations: string; lineage: Record<string, unknown> }
+
+/** Live-set messages: generated from backend/protocol.py (see lib/protocol.ts). */
+export type LiveState = StateOut;
+export type Recognition = RecognitionOut;
+export interface RepDetail { index: number; counted: boolean; peak_progress: number; duration: number; form_score: number | null;
+  evidence: { rule_id: string; passed: boolean; severity: string; message: string; evaluated?: boolean; measured: number | null; threshold: number | null }[] }

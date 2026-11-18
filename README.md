@@ -38,6 +38,14 @@ Synthetic/demo frames declare `[1, 1]`.
 - **Windows:** the `&` in this folder's name breaks npm's `.bin` shims; run tools via node:
   `node node_modules/typescript/bin/tsc --noEmit` and `node node_modules/next/dist/bin/next build`.
 
+## Live protocol (since M4)
+`/ws/live` messages are defined once in `backend/protocol.py` (validated on arrival); `web/lib/protocol.ts` is generated
+from it - run `python scripts/gen_protocol_ts.py` after changing the protocol (a test fails if you forget).
+The client authenticates in its first message (no token in the URL) and gives each set a `set_key`. If the connection
+drops, the server parks the set for 120 s; reconnecting with the same key resumes it with every counted rep, and
+`POST /api/live/sets/{set_key}/end` finishes it if the client can't get back. Parked sets live in-process: run a single
+API worker until they are moved to shared storage.
+
 ## What is in the repo
 | Path | Purpose |
 | --- | --- |

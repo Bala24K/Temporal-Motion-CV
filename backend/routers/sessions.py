@@ -159,10 +159,16 @@ def save_set(db: Session, u: User, sess: WorkoutSession, body: SetIn) -> SetReco
     return rec
 
 
-def set_out(s: SetRecord) -> dict:
-    return {"id": s.id, "exercise_id": s.exercise_id, "exercise_name": s.exercise_name, "set_number": s.set_number,
-            "reps": s.reps, "partial_reps": s.partial_reps, "weight_kg": s.weight_kg, "avg_form_score": s.avg_form_score,
-            "avg_rom": s.avg_rom, "avg_rep_seconds": s.avg_rep_seconds, "source": s.source}
+def set_out(s: SetRecord, detail: bool = False) -> dict:
+    out = {"id": s.id, "exercise_id": s.exercise_id, "exercise_name": s.exercise_name, "set_number": s.set_number,
+           "reps": s.reps, "partial_reps": s.partial_reps, "weight_kg": s.weight_kg, "avg_form_score": s.avg_form_score,
+           "avg_rom": s.avg_rom, "avg_rep_seconds": s.avg_rep_seconds, "source": s.source,
+           "created_at": s.created_at.isoformat() if s.created_at else None}
+    if detail:
+        out["reps_detail"] = [{"index": r.idx, "counted": r.counted, "peak_progress": r.peak_progress, "duration": r.duration,
+                               "form_score": r.form_score, "evidence": r.evidence or []}
+                              for r in sorted(s.rep_records, key=lambda r: r.id)]
+    return out
 
 
 @router.post("/sessions/{sid}/sets", status_code=201)
@@ -178,8 +184,8 @@ def finish_session(sid: int, u: User = Depends(current_user), db: Session = Depe
     return session_out(s)
 
 
-def session_out(s: WorkoutSession) -> dict:
-    sets = [set_out(x) for x in s.sets]
+def session_out(s: WorkoutSession, detail: bool = False) -> dict:
+    sets = [set_out(x, detail) for x in s.sets]
     scores = [x["avg_form_score"] for x in sets if x["avg_form_score"] is not None]
     return {"id": s.id, "name": s.name, "started_at": s.started_at.isoformat(),
             "finished_at": s.finished_at.isoformat() if s.finished_at else None,
@@ -198,7 +204,7 @@ def list_sessions(limit: int = 20, u: User = Depends(current_user), db: Session 
 
 @router.get("/sessions/{sid}")
 def get_session(sid: int, u: User = Depends(current_user), db: Session = Depends(get_db)):
-    return session_out(owned_session(db, u, sid))
+    return session_out(owned_session(db, u, sid), detail=True)
 
 
 # ---------------- offline clip analysis ----------------
