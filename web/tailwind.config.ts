@@ -5,13 +5,13 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        bg: "var(--bg)", surface: "var(--surface)", raise: "var(--raise)", ink: "var(--ink)", mute: "var(--mute)",
-        line: "var(--line)", brand: "var(--brand)", "brand-ink": "var(--brand-ink)",
-        good: "var(--good)", warn: "var(--warn)", bad: "var(--bad)",
+        bg: "var(--bg)", surface: "var(--surface)", raise: "var(--raise)", "raise-2": "var(--raise-2)", ink: "var(--ink)",
+        "ink-2": "var(--ink-2)", mute: "var(--mute)", line: "var(--line)", brand: "var(--brand)", "brand-ink": "var(--brand-ink)",
+        "brand-dim": "var(--brand-dim)", good: "var(--good)", warn: "var(--warn)", bad: "var(--bad)", info: "var(--info)",
       },
       fontFamily: {
-        display: ["Bricolage Grotesque", "Avenir Next", "Segoe UI", "system-ui", "sans-serif"],
-        sans: ["Figtree", "Segoe UI", "system-ui", "sans-serif"],
+        display: ["Archivo", "Inter", "system-ui", "sans-serif"],
+        sans: ["Inter", "system-ui", "Segoe UI", "sans-serif"],
       },
       borderRadius: { xl2: "1.25rem" },
     },

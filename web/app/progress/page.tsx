@@ -8,6 +8,11 @@ import { BarsChart, TrendChart } from "@/components/charts";
 import { Tabs } from "@/components/ui/tabs";
 import { Badge, Card, Meter, Select, Skeleton, Stat } from "@/components/ui/primitives";
 import { fmt, plural, titleCase } from "@/lib/utils";
+import Link from "next/link";
+import { ErrorState } from "@/components/ui/states";
+
+/** AI-derived metrics are shown, but marked: they are not validated against human-labelled data yet. */
+const Experimental = () => <span className="ml-2 align-middle text-[10px] font-semibold uppercase tracking-wider text-warn" title="Measured by the camera engine; not yet validated against human-reviewed sets">experimental</span>;
 
 type R = "today" | "week" | "month";
 const tone = (t: Trend) => (t.direction === "improving" ? "good" : t.direction === "declining" ? "warn" : "neutral");
@@ -21,15 +26,17 @@ export default function ProgressPage() {
   const d = p.data;
   return (
     <Shell>
-      <h1 className="font-display text-3xl font-extrabold">Progress</h1>
+      <div className="flex flex-wrap items-center justify-between gap-2"><h1 className="font-display text-3xl font-extrabold">Progress</h1>
+        <Link href="/history/" className="text-sm font-semibold text-brand hover:underline">See every session →</Link></div>
+      {p.error && <div className="mt-4"><ErrorState what="your progress" onRetry={() => p.refetch()} /></div>}
       <div className="mt-3"><Tabs label="Range" value={range} onChange={setRange} items={[{ id: "today", label: "Today" }, { id: "week", label: "Week" }, { id: "month", label: "Month" }]} /></div>
-      {!d ? <Skeleton className="mt-4 h-48" /> : (<>
+      {!d ? (p.error ? null : <Skeleton className="mt-4 h-48" />) : (<>
         <div className="mt-4 grid grid-cols-2 gap-3 md:grid-cols-3">
           <Stat value={d.workouts} label={`${d.workouts === 1 ? "workout" : "workouts"} · ${plural(d.days_trained, "training day")}`} /><Stat value={d.reps} label={`reps in ${plural(d.sets, "set")}`} /><Stat value={fmt(d.volume_kg)} label="kg volume" />
-          <Stat value={fmt(d.avg_form_score)} label="form consistency" /><Stat value={d.avg_rom != null ? `${Math.round(d.avg_rom * 100)}%` : "–"} label="of target range of motion" /><Stat value={`${Math.round(d.consistency * 100)}%`} label="of weekly target" /></div>
+          <Stat value={<>{fmt(d.avg_form_score)}<Experimental /></>} label="form checks passed" /><Stat value={<>{d.avg_rom != null ? `${Math.round(d.avg_rom * 100)}%` : "–"}<Experimental /></>} label="average depth (of your range)" /><Stat value={`${Math.round(d.consistency * 100)}%`} label="of weekly target" /></div>
         {range !== "today" && <div className="mt-4 grid gap-3 md:grid-cols-2"><Card><h2 className="font-bold">Volume</h2><BarsChart data={d.series} x="date" y="volume_kg" label="Volume by day" /></Card><Card><h2 className="font-bold">Reps</h2><BarsChart data={d.series} x="date" y="reps" label="Reps by day" /></Card></div>}
         <div className="mt-4 grid gap-3 md:grid-cols-2">
-          <Card><h2 className="font-bold">Muscle distribution</h2><div className="mt-2 space-y-2">{Object.entries(d.muscle_share).map(([m, s]) => <div key={m}><div className="flex justify-between text-sm"><span>{titleCase(m)}</span><span className="text-mute">{s}% · {plural(d.muscle_sets[m], "set")}</span></div><Meter value={s} /></div>)}{!Object.keys(d.muscle_share).length && <p className="text-mute">No analysed sets yet.</p>}</div></Card>
+          <Card><h2 className="font-bold">Muscle distribution</h2><div className="mt-2 space-y-2">{Object.entries(d.muscle_share).map(([m, s]) => <div key={m}><div className="flex justify-between text-sm"><span>{titleCase(m)}</span><span className="text-mute">{s}% · {plural(d.muscle_sets[m], "set")}</span></div><Meter value={s} label={`${titleCase(m)} share of sets`} /></div>)}{!Object.keys(d.muscle_share).length && <p className="text-mute">No analysed sets yet.</p>}</div></Card>
           <Card><h2 className="font-bold">Personal bests</h2><table className="mt-2 w-full text-sm"><tbody>{Object.entries(d.personal_bests).map(([k, v]) => <tr key={k} className="border-t border-line"><td className="py-2">{k}</td><td>{v.max_weight_kg}kg</td><td className="text-mute">{v.max_reps} reps</td></tr>)}</tbody></table></Card></div>
         {d.unsupported_sets > 0 && <p className="mt-3 text-sm text-mute">{d.unsupported_sets} set(s) were tracked manually, without AI analysis.</p>}</>)}
       <Card className="mt-6"><div className="flex flex-wrap items-center justify-between gap-2"><h2 className="text-xl font-bold">By exercise</h2>

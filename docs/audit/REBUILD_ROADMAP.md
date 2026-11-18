@@ -214,6 +214,22 @@ M1 Trustworthy input ──► M2 Calibration v2 ──► M3 Counter v2 (squat,
 
 **Regression tests:** component tests (Vitest + RTL), visual snapshots, accessibility scan in CI.
 
+**Status (2026-11-18): implemented, with the deviations listed.** Browser E2E (`RT/scripts/e2e_web.py`) passes with 0 console errors and now includes axe and responsive-layout checks; `RT/tests/test_m5_frontend_api.py` covers the API fields the new UI uses.
+
+| Item | State | Notes |
+| --- | --- | --- |
+| Tokens and type | Done | Dark-first palette (lime accent), light theme on request; Archivo (display/numerals, tabular) + Inter. Token names unchanged, so every page restyled from `globals.css`; `.force-dark` keeps the live screen dark in light theme |
+| Navigation | Done | Desktop left rail (Train, Workouts, Library, History, Progress, You + Nutrition/Console); mobile bottom tabs (5); skip link. Admin and nutrition out of the primary nav |
+| Live screen | Done | Setup panel (exercise, camera-placement diagram, weight, source, beep, recorder) → set HUD (phase gauge against the count line/personal range, one cue at a time, tracking badge, big tabular counter, range capture, **End set as the only footer control**) → set summary (per-rep strip, top issues) or the manual-log prompt. Exercise changes happen in setup, between sets (auto-detect confirm chips still switch mid-set) |
+| Skeleton overlay v2 | Done | Confidence-weighted opacity, dashed grey below 0.5, midline, measured joints in the accent colour, amber pulse on a failed check |
+| Library | Done | Camera-placement diagram on every card; "what we check", view-limited checks and "what we can't tell" (e.g. curl vs hammer curl) from the API |
+| Analytics honesty | Done | AI-derived metrics (form, depth) labelled "experimental"; the weekly figure is relabelled "training days" (it always counted distinct days) |
+| Accessibility | Done | Native `<dialog>` confirmations replace `window.confirm`; rep count announced through a live region; optional beep per rep; error and empty states on every query; named progress bars (found by axe). **axe (WCAG 2.1 A/AA): 0 violations of any severity** on all app routes (dark), key routes (light) and the live setup screen |
+| Responsive | Done | No horizontal overflow at 375/768/1280/1920 px on 7 routes (two layout bugs found and fixed by the check) |
+| Pose inference in a Web Worker | **Deferred** | Not verifiable without a real camera here; moving MediaPipe off the main thread risks breaking the only unverified path. Do it together with the first real-camera test |
+| Component tests (Vitest + RTL) | **Not done** | Covered by the Playwright E2E for now; adds a dev toolchain |
+| 30-min soak, Lighthouse score, real-camera FPS/latency | **Not measured** | Need a real browser session with a camera |
+
 ---
 
 ## M6 — Shoulder press, lateral raise; form-rule validation

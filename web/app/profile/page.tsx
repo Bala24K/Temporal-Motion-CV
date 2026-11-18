@@ -12,6 +12,9 @@ import { Button } from "@/components/ui/button";
 import { Badge, Card, Input, Label, Select, Skeleton } from "@/components/ui/primitives";
 import { toast, toastError } from "@/components/toast";
 import { titleCase } from "@/lib/utils";
+import Link from "next/link";
+import { useConfirm } from "@/components/ui/dialog";
+import { ErrorState } from "@/components/ui/states";
 
 const SkeletonViewer3D = dynamic(() => import("@/components/skeleton-3d").then((m) => m.SkeletonViewer3D), { ssr: false, loading: () => <Skeleton className="h-72" /> });
 const GOALS: Record<string, string> = { build_muscle: "Build muscle", get_stronger: "Get stronger", improve_fitness: "Improve fitness", lose_weight: "Lose weight", consistency: "Improve consistency", movement_quality: "Improve movement quality" };
@@ -34,9 +37,11 @@ export default function ProfilePage() {
     onSuccess: (u) => { setSession(token!, u); qc.invalidateQueries({ queryKey: ["goal"] }); toast("Saved"); }, onError: toastError });
   const del = useMutation({ mutationFn: () => api("/api/auth/me", { method: "DELETE" }), onSuccess: () => { clear(); router.replace("/login/"); }, onError: toastError });
   const seg = p.data?.segments_cm, h = p.data?.profile.height_cm;
+  const ask = useConfirm();
   return (
     <Shell>
-      <h1 className="font-display text-3xl font-extrabold">Profile</h1>
+      <h1 className="font-display text-3xl font-extrabold">You</h1>
+      {p.error && <div className="mt-4"><ErrorState what="your profile" onRetry={() => p.refetch()} /></div>}
       <div className="mt-4 grid gap-4 md:grid-cols-2">
         <Card><h2 className="text-xl font-bold">Goal</h2>
           <Label htmlFor="goal">What are you training for?</Label>
@@ -55,6 +60,10 @@ export default function ProfilePage() {
       <Card className="mt-4"><h2 className="text-xl font-bold">Your baselines</h2>
         {p.data && Object.keys(p.data.baselines).length ? <ul className="mt-2 divide-y divide-line text-sm">{Object.entries(p.data.baselines).map(([k, b]) => <li key={k} className="flex justify-between py-2"><span>{titleCase(k)}</span><span className="text-mute">{b.n} reps · usual range {Math.round(b.mean.peak_progress * 100)}% · {b.mean.duration.toFixed(1)}s/rep</span></li>)}</ul> : <p className="mt-2 text-mute">Baselines build as you train.</p>}</Card>
       <Card className="mt-4"><h3 className="font-bold">Privacy</h3><p className="mt-1 text-sm text-mute">Video is analysed in your browser and never stored or uploaded; only pose landmarks and set summaries are sent. You can erase everything at any time.</p>
-        <Button variant="danger" className="mt-3" onClick={() => confirm("This permanently deletes your account, workouts and history.") && del.mutate()}>Delete my account and data</Button></Card>
+        <Button variant="danger" className="mt-3" onClick={() => ask({ title: "Delete your account?", body: "This permanently deletes your account, workouts, calibration and history. It can't be undone.", confirmLabel: "Delete everything", danger: true, onConfirm: () => del.mutate() })}>Delete my account and data</Button></Card>
+      <Card className="mt-4 md:hidden"><h3 className="font-bold">More</h3><div className="mt-2 flex flex-wrap gap-2">
+        <Link href="/history/"><Button size="sm">History</Button></Link><Link href="/nutrition/"><Button size="sm">Nutrition</Button></Link>
+        {user?.is_admin && <Link href="/admin/"><Button size="sm">Console</Button></Link>}</div></Card>
+      {ask.dialog}
     </Shell>);
 }

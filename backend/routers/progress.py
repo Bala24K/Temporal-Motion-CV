@@ -166,7 +166,7 @@ def goal_progress(weeks: int = Query(8, ge=2, le=26), u: User = Depends(current_
                 "consistency": f"{streak}-week streak of hitting {u.weekly_target} sessions",
                 "movement_quality": "Form consistency is " + trend(fs)["direction"].replace("_", " "),
                 "get_stronger": "See per-exercise e1RM trends", "lose_weight": f"{streak}-week consistency streak",
-                "improve_fitness": f"{sum(counts)} sessions in {weeks} weeks"}.get(u.goal or "", f"{sum(counts)} sessions in {weeks} weeks")
+                "improve_fitness": f"{sum(counts)} training day{'' if sum(counts) == 1 else 's'} in {weeks} weeks"}.get(u.goal or "", f"{sum(counts)} training day{'' if sum(counts) == 1 else 's'} in {weeks} weeks")
     return {"goal": u.goal, "weekly_target": u.weekly_target, "weeks": [
         {"week_start": (start + timedelta(weeks=i)).isoformat(), "sessions": counts[i], "target_met": met[i],
          "volume_kg": round(vol[i], 1), "avg_form": fs[i]} for i in range(weeks)],

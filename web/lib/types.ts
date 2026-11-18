@@ -4,7 +4,8 @@ import type { RecognitionOut, StateOut } from "./protocol";
 export type Landmarks = Record<string, number[]>;
 export interface User { id: number; email: string; name: string; is_admin: boolean; goal: string | null; weekly_target: number }
 export interface Exercise { id: string; name: string; family: string; difficulty: string; target_muscles: string[]; secondary_muscles: string[];
-  equipment: string[]; movement_patterns: string[]; camera: { preferred: string; supported_views: string[]; notes: string }; form_checks?: string[] }
+  equipment: string[]; movement_patterns: string[]; camera: { preferred: string; supported_views: string[]; notes: string; full_body?: boolean }; form_checks?: string[];
+  rep_joints?: string[]; count_progress?: number; laterality?: string; limitations?: string[]; view_limited_checks?: { check: string; views: string[] }[] }
 export interface WorkoutItem { id: number; exercise_id: string | null; exercise_name: string; sets: number; reps: number; weight_kg: number; rest_seconds: number; ai_analysis: boolean; target_muscles: string[] }
 export interface Workout { id: number; name: string; notes: string; items: WorkoutItem[]; muscles: string[]; unsupported_count: number }
 export interface SetOut { id: number; exercise_id?: string | null; exercise_name: string; set_number: number; reps: number; partial_reps: number; weight_kg: number; avg_form_score: number | null;

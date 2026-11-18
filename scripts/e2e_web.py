@@ -19,6 +19,33 @@ def wait_count(pg, n, timeout=45):
         pg.wait_for_timeout(150)
     raise TimeoutError(f"rep counter never reached {n}")
 
+
+def end_set(pg):
+    """End set -> set summary sheet -> Continue (M5: the user sees the per-rep summary before moving on)."""
+    pg.get_by_role("button", name="End set").click()
+    pg.get_by_role("button", name="Continue").click(timeout=15000)
+
+
+AXE = os.path.join(os.path.dirname(__file__), "..", "web", "node_modules", "axe-core", "axe.min.js")
+axe_report = {}
+
+
+def axe(pg, name):
+    """WCAG 2.1 A/AA scan; serious/critical violations fail the run (acceptance criterion in REBUILD_ROADMAP M5)."""
+    if not os.path.exists(AXE):
+        print("axe-core not installed (cd web && npm ci) - skipping", name); return
+    pg.add_script_tag(path=AXE)
+    res = pg.evaluate("""async () => { const r = await axe.run(document, { runOnly: ['wcag2a', 'wcag2aa'], preload: false });  // preload would fetch cross-origin CSS, which our CSP blocks
+        return r.violations.map(v => ({id: v.id, impact: v.impact, n: v.nodes.length, help: v.help, sample: v.nodes[0] && v.nodes[0].target.join(' ')})); }""")
+    bad = [v for v in res if v["impact"] in ("serious", "critical")]
+    axe_report[name] = res
+    assert not bad, f"axe {name}: " + "; ".join(f"{v['id']} x{v['n']} ({v['help']}) e.g. {v['sample']}" for v in bad)
+
+
+def no_overflow(pg, name):
+    w = pg.evaluate("() => [document.documentElement.scrollWidth, window.innerWidth]")
+    assert w[0] <= w[1] + 1, f"horizontal overflow on {name}: {w}"
+
 with sync_playwright() as p:
     b = p.chromium.launch(args=["--use-gl=swiftshader", "--enable-unsafe-swiftshader"])
     pg = b.new_page(viewport={"width": 1180, "height": 800})
@@ -35,7 +62,7 @@ with sync_playwright() as p:
     print("auth + home ok")
 
     # --- exercises + unsupported
-    pg.get_by_role("link", name="Exercises").click(); pg.wait_for_url("**/exercises/")
+    pg.get_by_role("link", name="Library").click(); pg.wait_for_url("**/exercises/")
     expect(pg.get_by_role("heading", name="Squat", exact=True)).to_be_visible()
     pg.get_by_role("heading", name="Squat", exact=True).click(); expect(pg.get_by_text("What we check")).to_be_visible()
     pg.get_by_label("Exercise name").fill("Cable Y Raise"); pg.get_by_role("button", name="Check").click()
@@ -60,9 +87,12 @@ with sync_playwright() as p:
     wait_count(pg, 3)
     expect(pg.get_by_text("Keep your elbows by your sides").first).to_be_visible(timeout=15000)
     pg.screenshot(path=f"{SHOTS}/w4_live.png")
+    n_controls = pg.get_by_test_id("live-controls").get_by_role("button").count()
+    assert n_controls <= 2, f"{n_controls} controls in the live footer during a set"
+    axe(pg, "live set")
     wait_count(pg, 6)
-    pg.get_by_role("button", name="End set").click()
-    print("live set ok (reps counted, drift flagged)")
+    end_set(pg)
+    print("live set ok (reps counted, drift flagged, summary shown, <=2 controls, axe clean)")
     pg.get_by_role("button", name="Skip rest").click(timeout=15000)
     expect(pg.get_by_text("Manual tracking")).to_be_visible(timeout=10000)
     pg.screenshot(path=f"{SHOTS}/w5_manual.png")
@@ -72,19 +102,19 @@ with sync_playwright() as p:
     pg.screenshot(path=f"{SHOTS}/w6_summary.png"); print("manual set + summary ok")
 
     # --- quick set: auto-detect through the consensus recognizer (needs RECOGNIZER_MODE=consensus + ONNX for the learned half)
-    pg.get_by_role("link", name="Home").click(); pg.wait_for_url(BASE + "/")
+    pg.get_by_role("link", name="Train").click(); pg.wait_for_url(BASE + "/")
     pg.get_by_role("button", name="Quick set").click(); pg.get_by_role("dialog", name="Live workout").wait_for(timeout=15000)
     # Quick set must not silently start a bicep-curl set (audit defect #4): Start stays disabled until a choice is made
     expect(pg.get_by_role("button", name="Start", exact=True)).to_be_disabled()
     pg.get_by_label("Select exercise").select_option("auto")
     pg.get_by_label("Video source").select_option("demo"); pg.get_by_role("button", name="Start", exact=True).click()
     wait_count(pg, 3)
-    expect(pg.get_by_label("Select exercise")).to_have_value("squat", timeout=10000)   # the demo clip is a squat
+    expect(pg.get_by_test_id("exercise-name")).to_have_text("Squat", timeout=10000)     # the demo clip is a squat
     print("auto-detect quick set ok (locked on squat)")
-    pg.get_by_role("button", name="End set").click(); pg.wait_for_url("**/live/**"); expect(pg.get_by_role("heading", name="Session complete.")).to_be_visible(timeout=15000)
+    end_set(pg); pg.wait_for_url("**/live/**"); expect(pg.get_by_role("heading", name="Session complete.")).to_be_visible(timeout=15000)
 
     # --- personal range capture during a set (M3)
-    pg.get_by_role("link", name="Home").click(); pg.wait_for_url(BASE + "/")
+    pg.get_by_role("link", name="Train").click(); pg.wait_for_url(BASE + "/")
     pg.get_by_role("button", name="Quick set").click(); pg.get_by_role("dialog", name="Live workout").wait_for(timeout=15000)
     pg.get_by_label("Select exercise").select_option("bicep_curl")
     pg.get_by_label("Video source").select_option("demo"); pg.get_by_role("button", name="Start", exact=True).click()
@@ -95,11 +125,11 @@ with sync_playwright() as p:
     expect(pg.get_by_role("button", name="Recapture my range")).to_be_visible()
     pg.screenshot(path=f"{SHOTS}/w6b_range.png")
     wait_count(pg, 1)                                           # counting resumes against the captured range
-    pg.get_by_role("button", name="End set").click(); expect(pg.get_by_role("heading", name="Session complete.")).to_be_visible(timeout=15000)
+    end_set(pg); expect(pg.get_by_role("heading", name="Session complete.")).to_be_visible(timeout=15000)
     print("personal range capture ok")
 
     # --- an AI set with no reps is not silently dropped: the user chooses (M4)
-    pg.get_by_role("link", name="Home").click(); pg.wait_for_url(BASE + "/")
+    pg.get_by_role("link", name="Train").click(); pg.wait_for_url(BASE + "/")
     pg.get_by_role("button", name="Quick set").click(); pg.get_by_role("dialog", name="Live workout").wait_for(timeout=15000)
     pg.get_by_label("Select exercise").select_option("bicep_curl")
     pg.get_by_label("Video source").select_option("demo"); pg.get_by_role("button", name="Start", exact=True).click()
@@ -109,7 +139,7 @@ with sync_playwright() as p:
     pg.get_by_role("button", name="Discard").click(); expect(pg.get_by_role("heading", name="Session complete.")).to_be_visible(timeout=15000)
     print("empty set prompt ok")
 
-    pg.get_by_role("link", name="Home").click(); pg.wait_for_url(BASE + "/")
+    pg.get_by_role("link", name="Train").click(); pg.wait_for_url(BASE + "/")
     # --- connection drops mid-set: reconnect resumes the set with its reps (M4)
     pg.get_by_role("button", name="Quick set").click(); pg.get_by_role("dialog", name="Live workout").wait_for(timeout=15000)
     pg.get_by_label("Select exercise").select_option("bicep_curl")
@@ -121,7 +151,7 @@ with sync_playwright() as p:
     assert int(pg.get_by_test_id("rep-count").inner_text()) >= before, "reps lost on reconnect"
     wait_count(pg, before + 1)
     pg.screenshot(path=f"{SHOTS}/w6c_reconnect.png")
-    pg.get_by_role("button", name="End set").click(); expect(pg.get_by_role("heading", name="Session complete.")).to_be_visible(timeout=15000)
+    end_set(pg); expect(pg.get_by_role("heading", name="Session complete.")).to_be_visible(timeout=15000)
     print(f"reconnect ok (kept {before}+ reps across a dropped socket)")
 
     # --- history with per-rep detail, and workout editing (M4)
@@ -152,7 +182,7 @@ with sync_playwright() as p:
     pg.screenshot(path=f"{SHOTS}/w8_nutrition.png"); print("nutrition ok")
 
     # --- calibration + 3D
-    pg.get_by_role("link", name="Profile").click(); pg.wait_for_url("**/profile/")
+    pg.get_by_role("link", name="You").click(); pg.wait_for_url("**/profile/")
     pg.get_by_label("Height (cm, optional)").fill("178"); pg.get_by_label("Source").select_option("demo")
     for _ in range(3):
         pg.get_by_role("button", name="Capture", exact=False).first.click(); pg.wait_for_timeout(900)
@@ -167,6 +197,23 @@ with sync_playwright() as p:
     has3d = pg.get_by_test_id("skeleton-3d").count()
     pg.wait_for_timeout(700); pg.screenshot(path=f"{SHOTS}/w9_profile.png")
     print("calibration ok; 3D viewer element present:", bool(has3d))
+
+    # --- M5: accessibility + responsive layout on every app route
+    routes = ["/", "/workout/", "/exercises/", "/history/", "/progress/", "/profile/", "/nutrition/"]
+    for r in routes:
+        pg.goto(BASE + r); pg.wait_for_load_state("networkidle"); pg.wait_for_timeout(300)
+        axe(pg, r)
+    pg.emulate_media(color_scheme="light")
+    pg.evaluate("() => { document.documentElement.dataset.theme = 'light'; }")
+    axe(pg, "/profile/ (light theme)")
+    pg.evaluate("() => { document.documentElement.dataset.theme = 'dark'; }")
+    for w, h in ((375, 812), (768, 1024), (1280, 800), (1920, 1080)):
+        pg.set_viewport_size({"width": w, "height": h})
+        for r in routes:
+            pg.goto(BASE + r); pg.wait_for_load_state("networkidle"); pg.wait_for_timeout(250)
+            no_overflow(pg, f"{r} @ {w}px")
+        pg.goto(BASE + "/"); pg.wait_for_timeout(300); pg.screenshot(path=f"{SHOTS}/r_home_{w}.png")
+    print(f"accessibility (axe, {len(routes) + 2} scans: 0 serious/critical) + responsive (4 widths x {len(routes)} routes) ok")
     b.close()
 
     # --- admin (separate account)

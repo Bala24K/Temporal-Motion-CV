@@ -12,6 +12,8 @@ import { Shell } from "@/components/shell";
 import { Button } from "@/components/ui/button";
 import { Badge, Card, FieldError, Input, Label } from "@/components/ui/primitives";
 import { toast, toastError } from "@/components/toast";
+import { useConfirm } from "@/components/ui/dialog";
+import { EmptyState, ErrorState } from "@/components/ui/states";
 
 const schema = z.object({ name: z.string().min(1, "Name your workout").max(120),
   items: z.array(z.object({ exercise: z.string().min(2, "Pick an exercise"), sets: z.coerce.number().int().min(1).max(20), reps: z.coerce.number().int().min(1).max(200), weight_kg: z.coerce.number().min(0).max(1000), rest_seconds: z.coerce.number().int().min(0).max(900) })).min(1) });
@@ -24,6 +26,7 @@ export default function WorkoutPage() {
   const ws = useQuery({ queryKey: ["workouts"], queryFn: () => api<Workout[]>("/api/workouts") });
   const { register, control, handleSubmit, reset, watch, formState: { errors } } = useForm<F>({ resolver: zodResolver(schema) as any, defaultValues: EMPTY });
   const [editing, setEditing] = useState<number | null>(null);
+  const ask = useConfirm();
   const { fields, append, remove } = useFieldArray({ control, name: "items" });
   const names = new Set((ex.data?.exercises ?? []).map((e) => e.name.toLowerCase()));
   const save = useMutation({
@@ -38,15 +41,16 @@ export default function WorkoutPage() {
   return (
     <Shell>
       <h1 className="font-display text-3xl font-extrabold">Workouts</h1>
-      <div className="mt-4 grid gap-6 md:grid-cols-2">
+      <div className="mt-4 grid gap-6 lg:grid-cols-2 [&>*]:min-w-0">
         <div className="space-y-4">
           <Button onClick={() => router.push("/live/?quick=1")}>Quick set (auto-detect)</Button>
           {ws.data?.map((w) => (
             <Card key={w.id}><div className="flex items-center justify-between"><h2 className="text-xl font-bold">{w.name}</h2><Button variant="primary" size="sm" onClick={() => router.push(`/live/?workout=${w.id}`)}>Start</Button></div>
               <table className="mt-2 w-full text-sm"><tbody>{w.items.map((i) => <tr key={i.id} className="border-t border-line"><td className="py-2">{i.exercise_name} {!i.ai_analysis && <Badge tone="warn">manual</Badge>}</td><td className="text-right text-mute">{i.sets}×{i.reps}{i.weight_kg ? ` · ${i.weight_kg}kg` : ""}</td></tr>)}</tbody></table>
               <div className="mt-2 flex gap-1"><Button variant="ghost" size="sm" onClick={() => edit(w)}>Edit</Button>
-                <Button variant="ghost" size="sm" onClick={() => confirm("Delete this workout?") && del.mutate(w.id)}>Delete</Button></div></Card>))}
-          {ws.data?.length === 0 && <p className="text-mute">No workouts yet.</p>}
+                <Button variant="ghost" size="sm" onClick={() => ask({ title: `Delete "${w.name}"?`, body: "Past sessions stay in your history.", confirmLabel: "Delete", danger: true, onConfirm: () => del.mutate(w.id) })}>Delete</Button></div></Card>))}
+          {ws.error && <ErrorState what="your workouts" onRetry={() => ws.refetch()} />}
+          {ws.data?.length === 0 && <EmptyState title="No workouts yet">Build one on the right, or start a quick set.</EmptyState>}
         </div>
         <Card><h2 className="text-xl font-bold">{editing ? "Edit workout" : "New workout"}</h2>
           <form onSubmit={handleSubmit((v) => save.mutate(v))} noValidate>
@@ -67,5 +71,6 @@ export default function WorkoutPage() {
               <Button variant="primary" type="submit" disabled={save.isPending} className={editing ? "" : "ml-auto"}>{editing ? "Save changes" : "Save workout"}</Button></div>
           </form></Card>
       </div>
+      {ask.dialog}
     </Shell>);
 }

@@ -32,7 +32,7 @@ export default function Nutrition() {
     onSuccess: () => { qc.invalidateQueries({ queryKey: ["day"] }); setFood(""); }, onError: toastError });
   const del = useMutation({ mutationFn: (id: number) => api(`/api/nutrition/log/${id}`, { method: "DELETE" }), onSuccess: () => qc.invalidateQueries({ queryKey: ["day"] }) });
   const t = d.data?.totals, T = tg.data, ex = d.data?.exercise_expenditure_estimate;
-  const bar = (label: string, v: number, goal?: number, unit = "g") => (<div key={label}><div className="flex justify-between text-sm"><span>{label}</span><span className="text-mute">{fmt(v)}{goal ? ` / ${goal}` : ""} {unit}</span></div><Meter value={goal ? (v / goal) * 100 : 0} /></div>);
+  const bar = (label: string, v: number, goal?: number, unit = "g") => (<div key={label}><div className="flex justify-between text-sm"><span>{label}</span><span className="text-mute">{fmt(v)}{goal ? ` / ${goal}` : ""} {unit}</span></div><Meter label={`${label} vs target`} value={goal ? (v / goal) * 100 : 0} /></div>);
   return (
     <Shell>
       <h1 className="font-display text-3xl font-extrabold">Nutrition</h1>

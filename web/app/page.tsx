@@ -10,6 +10,7 @@ import { BarsChart } from "@/components/charts";
 import { Button } from "@/components/ui/button";
 import { Card, Skeleton, Stat } from "@/components/ui/primitives";
 import { fmt } from "@/lib/utils";
+import { ErrorState } from "@/components/ui/states";
 
 export default function Home() {
   const router = useRouter();
@@ -21,8 +22,9 @@ export default function Home() {
   return (
     <Shell>
       <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}>
-        <h1 className="font-display text-4xl font-extrabold">{greet}{user?.name ? `, ${user.name}` : ""}.</h1>
+        <h1 className="font-display text-4xl font-black md:text-5xl">{greet}{user?.name ? `, ${user.name}` : ""}.</h1>
         {goal.data && <p className="mt-1 text-mute">{goal.data.headline}</p>}
+        {(week.error || ws.error) && <div className="mt-4"><ErrorState what="your dashboard" onRetry={() => { week.refetch(); ws.refetch(); }} /></div>}
         <div className="mt-6 grid gap-4 md:grid-cols-2">
           <Card>{ws.isLoading ? <Skeleton className="h-40" /> : next ? (<>
             <h2 className="text-2xl font-bold">{next.name}</h2>

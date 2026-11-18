@@ -2,23 +2,38 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --bg: #eef1f4; --surface: #ffffff; --raise: #f6f8fa; --ink: #13202b; --mute: #5b6a78; --line: #dbe1e7;
-  --brand: #2b55f5; --brand-ink: #ffffff; --good: #14895c; --warn: #b36a0b; --bad: #c93c3c;
+/* Design tokens (docs/audit/FRONTEND_DESIGN_AUDIT.md section 3.2). Dark is the default; light only when chosen.
+   Token NAMES are kept stable (bg, surface, raise, ink, mute, line, brand, good, warn, bad) so every page restyles
+   from here. All text/surface pairs target WCAG AA. */
+:root, .force-dark {
+  --bg: #07090c; --surface: #0e1217; --raise: #151b22; --raise-2: #1d252e; --line: #26303b;
+  --ink: #f2f5f8; --ink-2: #b4bfca; --mute: #8d99a6;
+  --brand: #c6f432; --brand-ink: #0a0d05; --brand-dim: rgba(198, 244, 50, 0.16);
+  --good: #34d399; --warn: #fbbf24; --bad: #f87171; --info: #60a5fa;
+  --viz-1: #c6f432; --viz-2: #60a5fa; --viz-3: #f472b6; --viz-4: #fbbf24; --viz-grid: #1f2831;
+  --bone: #e6edf3; --joint-active: #c6f432; --joint-warn: #fbbf24; --joint-lost: #64748b;
+  --r-sm: 8px; --r-md: 14px; --r-lg: 22px;
+  --ease-out: cubic-bezier(.2, .8, .2, 1);
+  color-scheme: dark;
 }
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --bg: #0d151d; --surface: #15202b; --raise: #1b2836; --ink: #e8eef4; --mute: #93a3b2; --line: #263544;
-    --brand: #6f92ff; --brand-ink: #0b1220; --good: #3fcf93; --warn: #f0a646; --bad: #ff7a7a;
-  }
-}
-:root[data-theme="dark"] {
-  --bg: #0d151d; --surface: #15202b; --raise: #1b2836; --ink: #e8eef4; --mute: #93a3b2; --line: #263544;
-  --brand: #6f92ff; --brand-ink: #0b1220; --good: #3fcf93; --warn: #f0a646; --bad: #ff7a7a;
+:root[data-theme="light"] {
+  --bg: #f4f6f8; --surface: #ffffff; --raise: #eef2f5; --raise-2: #e3e9ee; --line: #d3dbe2;
+  --ink: #0b1016; --ink-2: #3f4a56; --mute: #5a6674;
+  --brand: #4d6b00; --brand-ink: #ffffff; --brand-dim: rgba(77, 107, 0, 0.12);
+  --good: #0f7a52; --warn: #9a5b00; --bad: #c0362f; --info: #1d5fd1;
+  --viz-1: #4d6b00; --viz-grid: #e3e9ee;
+  color-scheme: light;
 }
 html, body { background: var(--bg); color: var(--ink); }
-body { font-family: var(--font-sans, "Figtree", "Segoe UI", system-ui, sans-serif); padding: env(safe-area-inset-top) 0 env(safe-area-inset-bottom); -webkit-font-smoothing: antialiased; }
-h1, h2, h3 { font-family: "Bricolage Grotesque", "Avenir Next", "Segoe UI", system-ui, sans-serif; letter-spacing: -0.02em; }
-:focus-visible { outline: 3px solid var(--brand); outline-offset: 2px; }
+body { font-family: "Inter", system-ui, "Segoe UI", sans-serif; -webkit-font-smoothing: antialiased; font-feature-settings: "cv11", "ss01"; }
+h1, h2, h3, .font-display { font-family: "Archivo", "Inter", system-ui, sans-serif; letter-spacing: -0.02em; }
+.tabular, .tabular-nums { font-variant-numeric: tabular-nums; }
+:focus-visible { outline: 3px solid var(--brand); outline-offset: 2px; border-radius: 6px; }
+::selection { background: var(--brand); color: var(--brand-ink); }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; } }
-.live-count { font-size: min(26vw, 13rem); line-height: 0.9; letter-spacing: -0.05em; }
+
+/* live screen numerals: readable from ~3 m */
+.live-count { font-family: "Archivo", sans-serif; font-stretch: 125%; font-weight: 900; font-size: clamp(6rem, 22vh, 16rem); line-height: 0.85;
+  letter-spacing: -0.04em; font-variant-numeric: tabular-nums; }
+dialog::backdrop { background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(2px); }
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }

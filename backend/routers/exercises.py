@@ -13,13 +13,19 @@ router = APIRouter(prefix="/api/exercises", tags=["exercises"])
 
 
 def public(d, detail: bool = False) -> dict:
+    joints = [j for j in d.rep.signal.get("joints", []) if j not in ("hip_center", "shoulder_center")]
     out = {"id": d.id, "name": d.name, "family": d.family, "status": d.status, "difficulty": d.difficulty,
            "target_muscles": d.target_muscles, "secondary_muscles": d.secondary_muscles,
            "equipment": d.equipment, "movement_patterns": d.movement_patterns,
-           "camera": d.camera.model_dump(), "body_position": d.body_position, "ai_analysis": True}
+           "camera": d.camera.model_dump(), "body_position": d.body_position, "ai_analysis": True,
+           # what the live screen needs to draw the right joints and the counting threshold
+           "rep_joints": joints, "count_progress": d.rep.count_progress, "laterality": d.laterality}
     if detail:
+        same = [x.name for x in state.registry.recognisable() if x.id != d.id and x.equivalence_key() == d.equivalence_key()]
         out.update(aliases=d.aliases, primary_joints=d.primary_joints, version=d.version,
-                   form_checks=[r.good or r.id for r in d.form_rules if r.good])
+                   form_checks=[r.good or r.id for r in d.form_rules if r.good],
+                   view_limited_checks=[{"check": r.good or r.id, "views": r.views} for r in d.form_rules if r.views and r.good],
+                   limitations=([f"Counted the same as {', '.join(same)} - the camera can't tell them apart."] if same else []))
     return out
 
 

@@ -21,8 +21,8 @@ const tones = { neutral: "border-line text-mute", good: "border-good text-good",
 export const Badge = ({ tone = "neutral", className, ...p }: HTMLAttributes<HTMLSpanElement> & { tone?: keyof typeof tones }) => (
   <span className={cn("inline-block rounded-full border bg-raise px-2.5 py-0.5 text-xs font-semibold", tones[tone], className)} {...p} />);
 
-export const Meter = ({ value, className }: { value: number; className?: string }) => (
-  <div className={cn("h-2 overflow-hidden rounded-full bg-raise", className)} role="progressbar" aria-valuenow={Math.round(value)} aria-valuemin={0} aria-valuemax={100}>
+export const Meter = ({ value, className, label = "Progress" }: { value: number; className?: string; label?: string }) => (
+  <div className={cn("h-2 overflow-hidden rounded-full bg-raise", className)} role="progressbar" aria-label={label} aria-valuenow={Math.round(value)} aria-valuemin={0} aria-valuemax={100}>
     <div className="h-full rounded-full bg-brand transition-all" style={{ width: `${Math.max(0, Math.min(100, value))}%` }} />
   </div>);
 

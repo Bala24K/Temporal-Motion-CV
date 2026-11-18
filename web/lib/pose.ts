@@ -19,18 +19,53 @@ export const WORLD_PREFIX = "w:";
 export interface PoseSource { stop: () => void; grab?: () => Landmarks | null; stats: () => PoseStats }
 export type OnFrame = (lm: Landmarks | null, tSeconds: number) => void;
 
-/** Draw landmarks inside the letterboxed video rectangle (object-contain), so the skeleton lines up with the picture. */
-export function drawSkeleton(cv: HTMLCanvasElement, lm: Landmarks | null, aspect = 4 / 3) {
+export interface SkeletonStyle {
+  /** Joint stems the current exercise measures ("elbow", "knee", ...): drawn larger, in the accent colour. */
+  active?: string[];
+  /** A form check just failed: active joints pulse amber. */
+  warn?: boolean;
+}
+const SK = { bone: "230,237,243", active: "#c6f432", warn: "#fbbf24", lost: "100,116,139" };
+const MIN_DRAW = 0.15, CONFIDENT = 0.5;
+
+/** Skeleton overlay v2, drawn inside the letterboxed video rectangle (object-contain) so it lines up with the picture.
+ *  Bone opacity follows landmark confidence; below 0.5 a bone is dashed and grey (a guess, not a measurement);
+ *  the midline (nose - shoulder centre - hip centre) matches the engine's graph; joints the exercise uses are
+ *  emphasised and pulse amber when a form check fails. */
+export function drawSkeleton(cv: HTMLCanvasElement, lm: Landmarks | null, aspect = 4 / 3, style: SkeletonStyle = {}) {
   const dpr = window.devicePixelRatio || 1, cw = cv.clientWidth, ch = cv.clientHeight;
   if (cv.width !== Math.round(cw * dpr) || cv.height !== Math.round(ch * dpr)) { cv.width = Math.round(cw * dpr); cv.height = Math.round(ch * dpr); }
   const c = cv.getContext("2d"); if (!c) return;
   c.setTransform(dpr, 0, 0, dpr, 0, 0); c.clearRect(0, 0, cw, ch); if (!lm) return;
   const rw = cw / ch > aspect ? ch * aspect : cw, rh = cw / ch > aspect ? ch : cw / aspect, ox = (cw - rw) / 2, oy = (ch - rh) / 2;
-  const P = (k: string): [number, number] | null => { const v = lm[k]; return v && v[2] > 0.3 ? [ox + v[0] * rw, oy + v[1] * rh] : null; };
-  c.lineWidth = 4; c.lineCap = "round"; c.strokeStyle = "rgba(111,146,255,.85)";
-  for (const [a, b] of BONES) { const p = P(a), q = P(b); if (p && q) { c.beginPath(); c.moveTo(...p); c.lineTo(...q); c.stroke(); } }
-  c.fillStyle = "#fff";
-  for (const k of Object.keys(MP)) { const p = P(k); if (p) { c.beginPath(); c.arc(p[0], p[1], 4, 0, 7); c.fill(); } }
+  type Pt = { x: number; y: number; v: number };
+  const P = (k: string): Pt | null => { const v = lm[k]; return v && (v[2] ?? 1) > MIN_DRAW ? { x: ox + v[0] * rw, y: oy + v[1] * rh, v: v[2] ?? 1 } : null; };
+  const mid = (a: Pt | null, b: Pt | null): Pt | null => (a && b ? { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2, v: Math.min(a.v, b.v) } : a ?? b);
+  const active = new Set((style.active ?? []).flatMap((j) => [j, `left_${j}`, `right_${j}`]));
+  const scale = Math.max(0.6, Math.min(1.6, rh / 600));
+  const hot = style.warn ? SK.warn : SK.active;
+  const seg = (p: Pt | null, q: Pt | null, isActive: boolean) => {
+    if (!p || !q) return;
+    const v = Math.min(p.v, q.v);
+    c.beginPath(); c.moveTo(p.x, p.y); c.lineTo(q.x, q.y);
+    if (v < CONFIDENT) { c.setLineDash([6 * scale, 6 * scale]); c.strokeStyle = `rgba(${SK.lost},0.8)`; c.lineWidth = 2 * scale; }
+    else { c.setLineDash([]); c.strokeStyle = isActive ? hot : `rgba(${SK.bone},${(0.35 + 0.65 * v).toFixed(2)})`; c.lineWidth = (isActive ? 5 : 3) * scale; }
+    c.stroke();
+  };
+  c.lineCap = "round";
+  const sc = mid(P("left_shoulder"), P("right_shoulder")), hc = mid(P("left_hip"), P("right_hip"));
+  seg(P("nose"), sc, false); seg(sc, hc, false);
+  for (const [a, b] of BONES) seg(P(a), P(b), active.has(a) && active.has(b));
+  c.setLineDash([]);
+  for (const k of Object.keys(MP)) {
+    const p = P(k); if (!p) continue;
+    const isActive = active.has(k) && p.v >= CONFIDENT;
+    c.beginPath(); c.arc(p.x, p.y, (isActive ? 7 : 3.5) * scale, 0, Math.PI * 2);
+    if (isActive) { c.shadowColor = hot; c.shadowBlur = 14 * scale; c.fillStyle = hot; }
+    else { c.shadowBlur = 0; c.fillStyle = p.v >= CONFIDENT ? `rgba(${SK.bone},0.95)` : `rgba(${SK.lost},0.9)`; }
+    c.fill();
+  }
+  c.shadowBlur = 0;
 }
 
 class Meter { private n = 0; private t0 = performance.now(); private ms = 0; fps = 0;

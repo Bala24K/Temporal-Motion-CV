@@ -123,7 +123,7 @@ export function CalibrationWizard({ initialHeight }: { initialHeight: number | n
           {assessment?.message && <div className="absolute inset-x-0 bottom-2 mx-auto w-fit max-w-[90%] rounded-full bg-black/70 px-4 py-1 text-center text-sm text-white" role="status">{assessment.message}</div>}
           {assessment?.ok && <div className="absolute inset-x-0 bottom-2 mx-auto w-fit rounded-full bg-good px-4 py-1 text-sm font-semibold text-black" role="status">Got it</div>}
         </div>
-        {capturing && <Meter className="mt-2 max-w-md" value={(elapsed / STAGE_TIMEOUT_MS) * 100} />}
+        {capturing && <Meter className="mt-2 max-w-md" label="Time spent on this pose" value={(elapsed / STAGE_TIMEOUT_MS) * 100} />}
         {assessment && <Checklist checks={assessment.checks} />}
         <div className="mt-3 flex flex-wrap items-center gap-2">
           <select aria-label="Source" className="rounded-xl border border-line bg-raise px-3 py-2" value={source} onChange={(e) => setSource(e.target.value as "camera" | "demo")} disabled={capturing}><option value="camera">Camera</option><option value="demo">Demo body</option></select>
@@ -137,7 +137,7 @@ export function CalibrationWizard({ initialHeight }: { initialHeight: number | n
           <b>{result.status === "good" ? "Calibrated" : result.status === "usable" ? "Calibrated (usable)" : "Low-quality calibration"}</b> · quality {Math.round(result.quality * 100)}%
           {result.method === "2d+3d" && result.ratio_agreement_3d != null ? ` · 2D/3D agreement ${Math.round(result.ratio_agreement_3d * 100)}%` : ""}</Notice>
         <div className="grid max-w-md grid-cols-3 gap-3 text-sm">{(["stability", "confidence", "coverage"] as const).map((k) => (
-          <div key={k}><div className="flex justify-between text-mute"><span className="capitalize">{k}</span><span>{Math.round(result[k] * 100)}%</span></div><Meter value={result[k] * 100} /></div>))}</div>
+          <div key={k}><div className="flex justify-between text-mute"><span className="capitalize">{k}</span><span>{Math.round(result[k] * 100)}%</span></div><Meter label={`Calibration ${k}`} value={result[k] * 100} /></div>))}</div>
         {result.warnings.map((w) => <Notice key={w}>{w}</Notice>)}
         {result.stages.filter((s) => !s.ok).map((s) => <Notice key={s.stage}><b>{STAGE_LABEL[s.stage] ?? s.stage}</b> pose wasn&apos;t clear: {s.message}</Notice>)}
         <Button onClick={reset}>Recalibrate</Button></div>)}
