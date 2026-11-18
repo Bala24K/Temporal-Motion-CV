@@ -8,7 +8,7 @@ import { Shell } from "@/components/shell";
 import { Button } from "@/components/ui/button";
 import { Badge, Card, Notice, Skeleton } from "@/components/ui/primitives";
 import { fmt } from "@/lib/utils";
-import { RepStrip, topIssues } from "@/components/rep-strip";
+import { EvidenceLine, RepStrip, topIssues } from "@/components/rep-strip";
 
 const when = (iso: string) => new Date(iso + (iso.endsWith("Z") ? "" : "Z")).toLocaleString(undefined, { weekday: "short", day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" });
 
@@ -25,7 +25,7 @@ function SetRow({ s }: { s: SetOut }) {
         <span className="w-14 text-right tabular-nums text-mute">{s.avg_form_score ?? "–"}</span>
       </button>
       {open && <div className="pl-6"><RepStrip reps={detail} />
-        {issues.length > 0 && <ul className="mt-2 text-sm">{issues.map(([m, n]) => <li key={m} className="text-warn">{m} <span className="text-mute">({n} rep{n > 1 ? "s" : ""})</span></li>)}</ul>}
+        {issues.length > 0 && <ul className="mt-2 text-sm">{issues.map(([m, n, e]) => <li key={m} className="text-warn">{m} <span className="text-mute">({n} rep{n > 1 ? "s" : ""})</span><EvidenceLine e={e} /></li>)}</ul>}
         {s.avg_rep_seconds != null && <p className="mt-1 text-sm text-mute">Average rep {s.avg_rep_seconds.toFixed(1)} s{s.avg_rom != null ? ` · average depth ${Math.round(s.avg_rom * 100)}% of range` : ""}</p>}</div>}
     </li>);
 }

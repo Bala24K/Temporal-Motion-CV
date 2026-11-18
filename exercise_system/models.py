@@ -28,11 +28,30 @@ class RepDefinition(BaseModel):
     population_range: Optional[Dict[str, List[float]]] = None
 
 
+class RuleValidation(BaseModel):
+    """Evidence behind a form rule (docs/audit/TEST_AND_EVALUATION_PLAN.md section 6, written by `ml.form_eval --apply`).
+
+    provisional: thresholds are expert-informed guesses, never measured against labelled reps (the default).
+    validated:   met the targets (warning precision >= 0.8, <= 5 false warnings per 100 clean reps).
+    info_only:   missed a target but is still informative; shown as a tip, never as a warning, excluded from the score.
+    disabled:    missed the targets badly; not evaluated at all.
+    """
+    status: Literal["provisional", "validated", "info_only", "disabled"] = "provisional"
+    precision: Optional[float] = None
+    recall: Optional[float] = None
+    false_per_100_clean: Optional[float] = None
+    faulty_reps: Optional[int] = None
+    clean_reps: Optional[int] = None
+    dataset: Optional[str] = None
+    date: Optional[str] = None
+
+
 class FormRule(BaseModel):
     id: str
-    type: Literal["rom", "tempo", "stability", "limit", "symmetry"]
+    # reach: the signal must get to at least `min` (P95) / down to at most `max` (P5) during the rep, e.g. lockout
+    type: Literal["rom", "tempo", "stability", "limit", "symmetry", "reach"]
     severity: Literal["info", "warn", "major"] = "warn"
-    signal: Optional[dict] = None        # stability / limit / symmetry
+    signal: Optional[dict] = None        # stability / limit / symmetry / reach
     min: Optional[float] = None          # rom: fraction of expected range; limit: value
     max: Optional[float] = None          # rom/limit/stability(range)/symmetry(mean |L-R|)
     min_rep_seconds: Optional[float] = None
@@ -41,6 +60,11 @@ class FormRule(BaseModel):
     bad: str = ""
     views: Optional[List[Literal["front", "side", "45deg"]]] = None   # evaluate only in these camera views
     min_evaluable: float = 0.8           # share of rep frames with a finite signal required to judge the rule
+    validation: RuleValidation = Field(default_factory=RuleValidation)
+
+    @property
+    def effective_severity(self) -> str:
+        return "info" if self.validation.status == "info_only" else self.severity
 
 
 class Posture(BaseModel):
@@ -82,6 +106,7 @@ class ExerciseDefinition(BaseModel):
     # visible_side: side-on views hide the far limbs, so quality gating and side:"visible" signals use the
     # better-visible side (both sides when both are clearly visible). bilateral: both sides always required.
     laterality: Literal["bilateral", "visible_side"] = "bilateral"
+    limitations: List[str] = Field(default_factory=list)   # what this camera setup can't judge (shown in the library)
     metric: Literal["reps", "duration"] = "reps"
     confidence_threshold: float = 0.6
 

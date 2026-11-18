@@ -52,6 +52,7 @@ def replay(frames: Iterable[Tuple[float, dict]], definition, profile: Optional[B
             rejected += 1
             continue
         payloads.append(sess.push(lm, t))
+    sess.finish()                     # end of set, as the live handler does: closes a last rep that never fully returned
     return {"summary": sess.summary(), "payloads": payloads, "frames": len(payloads), "rejected_frames": rejected}
 
 

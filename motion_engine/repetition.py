@@ -42,10 +42,12 @@ class RepEvent:
     end_progress: float = 0.0     # how far back toward rest the rep returned (0 = full return)
     completion: str = "return"    # return | reversal | settle | flush
     signals: Dict[str, np.ndarray] = field(repr=False, default_factory=dict)
+    times: np.ndarray = field(repr=False, default_factory=lambda: np.zeros(0))   # timestamp of each signal sample
 
     def summary(self) -> dict:
         return {
             "index": self.index, "counted": self.counted,
+            "t_start": round(self.t_start, 3), "t_end": round(self.t_end, 3),
             "peak_progress": round(self.peak_progress, 3), "duration": round(self.duration, 2),
             "toward_peak_seconds": round(self.toward_peak_seconds, 2),
             "away_from_peak_seconds": round(self.away_from_peak_seconds, 2),
@@ -234,7 +236,7 @@ class RepCounter:
             t_start=float(ts[0]), t_peak=float(ts[k]), t_end=float(ts[-1]),
             peak_progress=peak_p, duration=dur,
             toward_peak_seconds=float(ts[k] - ts[0]), away_from_peak_seconds=float(ts[-1] - ts[k]),
-            end_progress=float(ps[-1]), completion=how, signals=sig,
+            end_progress=float(ps[-1]), completion=how, signals=sig, times=ts,
         )
 
     def pop_event(self) -> Optional[str]:

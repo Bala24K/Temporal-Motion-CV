@@ -36,7 +36,7 @@
     ],
     "preferred": "front",
     "full_body": false,
-    "notes": ""
+    "notes": "Face the camera with both arms in view, including your hands at the top of the press."
   },
   "required_joints": [
     "left_shoulder",
@@ -50,17 +50,26 @@
   ],
   "rep": {
     "signal": {
-      "primitive": "joint_angle",
+      "primitive": "segment_vertical_angle",
       "joints": [
         "shoulder",
-        "elbow",
-        "wrist"
+        "elbow"
       ],
       "side": "mean"
     },
-    "rest": 90,
-    "peak": 172,
-    "toward_peak_phase": "concentric"
+    "rest": 85,
+    "peak": 168,
+    "toward_peak_phase": "concentric",
+    "population_range": {
+      "rest": [
+        60,
+        110
+      ],
+      "peak": [
+        145,
+        180
+      ]
+    }
   },
   "form_rules": [
     {
@@ -69,8 +78,25 @@
       "min": 0.85,
       "max": null,
       "severity": "warn",
-      "good": "Full lockout",
-      "bad": "Press all the way up"
+      "good": "Pressed overhead",
+      "bad": "Press all the way overhead"
+    },
+    {
+      "id": "lockout",
+      "type": "reach",
+      "signal": {
+        "primitive": "joint_angle",
+        "joints": [
+          "shoulder",
+          "elbow",
+          "wrist"
+        ],
+        "side": "mean"
+      },
+      "min": 155,
+      "severity": "warn",
+      "good": "Arms straight at the top",
+      "bad": "Straighten your arms at the top"
     },
     {
       "id": "tempo",
@@ -81,7 +107,7 @@
       "bad": "Slow down - control both halves of the rep"
     },
     {
-      "id": "no_lean_back",
+      "id": "torso_upright",
       "type": "limit",
       "signal": {
         "primitive": "trunk_lean"
@@ -90,24 +116,26 @@
       "min": null,
       "severity": "warn",
       "good": "Torso stays upright",
-      "bad": "Avoid leaning back"
+      "bad": "Keep your torso upright - don't lean to one side"
     },
     {
       "id": "arm_sync",
       "type": "symmetry",
       "signal": {
-        "primitive": "joint_angle",
+        "primitive": "segment_vertical_angle",
         "joints": [
           "shoulder",
-          "elbow",
-          "wrist"
+          "elbow"
         ],
         "side": "mean"
       },
       "max": 15,
       "severity": "warn",
       "good": "Arms press evenly",
-      "bad": "Arms are uneven"
+      "bad": "Arms are uneven",
+      "views": [
+        "front"
+      ]
     }
   ],
   "posture": [
@@ -121,10 +149,16 @@
         "side": "mean"
       },
       "stat": "median",
-      "min": 60,
-      "max": 150,
+      "min": 70,
+      "max": null,
       "scale": 30
     }
   ],
-  "motion_plane": "frontal"
+  "motion_plane": "frontal",
+  "version": 2,
+  "laterality": "bilateral",
+  "limitations": [
+    "Leaning back (arching your lower back) can't be seen from the front.",
+    "Both arms are expected to press together; alternating one-arm presses aren't counted reliably."
+  ]
 }

@@ -65,6 +65,12 @@ with sync_playwright() as p:
     pg.get_by_role("link", name="Library").click(); pg.wait_for_url("**/exercises/")
     expect(pg.get_by_role("heading", name="Squat", exact=True)).to_be_visible()
     pg.get_by_role("heading", name="Squat", exact=True).click(); expect(pg.get_by_text("What we check")).to_be_visible()
+    # M6: every check shows how far it has been validated; limitations come from the definition
+    pg.get_by_role("heading", name="Shoulder Press", exact=True).click()
+    checks = pg.get_by_test_id("check-list").last
+    expect(checks.get_by_text("Arms straight at the top")).to_be_visible(timeout=10000)
+    expect(checks.get_by_text("untested").first).to_be_visible()
+    expect(pg.get_by_text("can't be seen from the front").first).to_be_visible()
     pg.get_by_label("Exercise name").fill("Cable Y Raise"); pg.get_by_role("button", name="Check").click()
     expect(pg.get_by_text("Exercise not fully supported yet")).to_be_visible()
     pg.screenshot(path=f"{SHOTS}/w2_exercises.png"); print("exercises + unsupported ok")
@@ -205,6 +211,7 @@ with sync_playwright() as p:
         axe(pg, r)
     pg.emulate_media(color_scheme="light")
     pg.evaluate("() => { document.documentElement.dataset.theme = 'light'; }")
+    pg.wait_for_timeout(500)          # let colour transitions finish, or axe samples half-faded text
     axe(pg, "/profile/ (light theme)")
     pg.evaluate("() => { document.documentElement.dataset.theme = 'dark'; }")
     for w, h in ((375, 812), (768, 1024), (1280, 800), (1920, 1080)):

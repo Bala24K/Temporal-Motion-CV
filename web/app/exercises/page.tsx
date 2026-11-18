@@ -11,6 +11,8 @@ import { toastError } from "@/components/toast";
 import { CameraDiagram } from "@/components/camera-diagram";
 import { ErrorState } from "@/components/ui/states";
 
+const STATUS_LABEL = { provisional: "untested", validated: "validated", info_only: "tip only", disabled: "off" } as const;
+
 interface Resolve { supported: boolean; message?: string; exercise?: Exercise; similar?: Exercise[] }
 
 export default function Exercises() {
@@ -37,7 +39,10 @@ export default function Exercises() {
             <h3 className="text-lg font-bold">{e.name}</h3><p className="text-sm text-mute">{e.target_muscles.map(titleCase).join(", ")}</p>
             <CameraDiagram className="mt-3" view={e.camera.preferred} fullBody={e.camera.full_body} />
             <div className="mt-3 flex flex-wrap gap-1.5">{e.equipment.map((x) => <Badge key={x}>{x}</Badge>)}<Badge tone="brand">Counts reps</Badge></div></button>
-            {open === e.id && detail.data && <div className="mt-3 border-t border-line pt-3 text-sm"><p className="font-semibold">What we check</p><ul className="mt-1 list-disc pl-5 text-ink-2">{detail.data.form_checks?.map((c) => <li key={c}>{c}</li>)}</ul>
+            {open === e.id && detail.data && <div className="mt-3 border-t border-line pt-3 text-sm"><p className="font-semibold">What we check</p><ul className="mt-1 space-y-1 text-ink-2" data-testid="check-list">{(detail.data.check_validation ?? []).filter((c) => c.status !== "disabled").map((c) => (
+                <li key={c.id} className="flex flex-wrap items-center gap-2">{c.check}
+                  <Badge tone={c.status === "validated" ? "good" : "neutral"}>{STATUS_LABEL[c.status]}</Badge></li>))}</ul>
+              {detail.data.check_validation?.some((c) => c.status === "provisional") && <p className="mt-1 text-xs text-mute">Untested checks use coaching-informed limits that haven&apos;t yet been measured against coach-labelled reps, so treat them as guidance.</p>}
               {!!detail.data.view_limited_checks?.length && <p className="mt-2 text-mute">{detail.data.view_limited_checks.map((v) => `${v.check} (only from ${v.views.join("/")})`).join("; ")}</p>}
               {e.camera.notes && <p className="mt-2 text-ink-2">{e.camera.notes}</p>}<p className="mt-2 text-mute">Camera views that work: {e.camera.supported_views.map((v) => v === "45deg" ? "45°" : v).join(", ")}</p>
               {!!detail.data.limitations?.length && <><p className="mt-3 font-semibold">What we can&apos;t tell</p><ul className="mt-1 list-disc pl-5 text-mute">{detail.data.limitations.map((l) => <li key={l}>{l}</li>)}</ul></>}</div>}

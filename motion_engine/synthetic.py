@@ -66,10 +66,11 @@ EX = {
     "bicep_curl": _curl, "hammer_curl": _curl,
     "squat": _squat,
     "goblet_squat": lambda p, f: {**_squat(p, f), "elbow_int": 45, "arm_elev": 20, "bend": -1},
-    "lateral_raise": lambda p, f: dict(arm_elev=_lerp(8, 92, p), elbow_int=168, lean=(15 * p if f == "lean" else 2)),
+    "lateral_raise": lambda p, f: dict(arm_elev=_lerp(8, 92, p), elbow_int=(_lerp(168, 115, p) if f == "bent_arms" else 168),
+                                       lean=(15 * p if f == "lean" else 2)),
     "front_raise": lambda p, f: dict(arm_elev=_lerp(8, 92, p), elbow_int=168, lean=(15 * p if f == "lean" else 2)),
-    "shoulder_press": lambda p, f: dict(elbow_int=_lerp(90, 172, p), arm_elev=_lerp(85, 168, p), bend=+1,
-                                        lean=(18 * p if f == "lean" else 2)),
+    "shoulder_press": lambda p, f: dict(elbow_int=_lerp(90, 140 if f == "no_lockout" else 172, p), arm_elev=_lerp(85, 168, p),
+                                        bend=+1, lean=(18 * p if f == "lean" else 2)),
     "overhead_triceps_extension": lambda p, f: dict(elbow_int=_lerp(40, 170, p), arm_elev=165, bend=+1,
                                                    lean=(15 * p if f == "lean" else 2)),
     "romanian_deadlift": lambda p, f: dict(knee_int=165, lean=_lerp(3, 80, p), arm_elev=2, elbow_int=175),
@@ -85,7 +86,8 @@ def synth_sequence(exercise_id: str, reps: int = 5, fps: float = 30.0, fault: Op
                    depth: float = 1.0, rep_seconds: float = 2.4, noise: float = 0.002, seed: int = 0,
                    scale: float = 1.0, lead_in: float = 0.6, left_right_skew: float = 0.0
                    ) -> Tuple[List[dict], List[float]]:
-    """Returns (frames, timestamps). `fault` in {None,'shallow','fast','drift','lean'}."""
+    """Returns (frames, timestamps). `fault` in {None,'shallow','fast','drift','lean','asym','no_lockout'}.
+    asym: the left arm only travels 65% as far as the right. no_lockout: shoulder press stops at 140 deg elbow."""
     if exercise_id not in EX:
         raise KeyError(f"no synthetic model for {exercise_id}")
     rng = np.random.default_rng(seed)
@@ -105,6 +107,9 @@ def synth_sequence(exercise_id: str, reps: int = 5, fps: float = 30.0, fault: Op
     for i, p in enumerate(prog):
         kw = EX[exercise_id](p, fault)
         pose = _pose(scale=scale, **kw)
+        if fault == "asym":                                  # left arm lags: take it from a pose at 65% progress
+            lag = _pose(scale=scale, **EX[exercise_id](0.65 * p, None))
+            pose.update({k: v for k, v in lag.items() if k in ("left_elbow", "left_wrist")})
         frame = {}
         for k, (x, y, v) in pose.items():
             frame[k] = (x + rng.normal(0, noise), y + rng.normal(0, noise), v)
@@ -113,6 +118,29 @@ def synth_sequence(exercise_id: str, reps: int = 5, fps: float = 30.0, fault: Op
         frames.append(frame)
         ts.append(i / fps)
     return frames, ts
+
+
+def press_with_rack(reps: int = 5, fps: float = 30.0, fault: Optional[str] = None, seed: int = 0,
+                    noise: float = 0.002, rep_seconds: float = 2.4) -> Tuple[List[dict], List[float]]:
+    """A whole shoulder-press set as a user does it: arms hanging -> dumbbells raised to the shoulders -> presses ->
+    dumbbells lowered back to the sides. Hanging and locked-out arms have the same elbow angle (~170 deg), so a
+    counter driven by the elbow angle counts the final lowering as an extra rep."""
+    rng = np.random.default_rng(seed)
+    top_elbow = 140 if fault == "no_lockout" else 172
+    down, rack, top = (170.0, 8.0), (90.0, 85.0), (float(top_elbow), 168.0)
+
+    def go(a, b, sec):
+        n = int(sec * fps)
+        return [(a[0] + (b[0] - a[0]) * w, a[1] + (b[1] - a[1]) * w) for w in smoothstep(np.arange(n) / n)]
+    path = [down] * int(0.7 * fps) + go(down, rack, 1.0) + [rack] * int(0.4 * fps)
+    for _ in range(reps):
+        path += go(rack, top, rep_seconds / 2) + go(top, rack, rep_seconds / 2) + [rack] * int(0.3 * fps)
+    path += go(rack, down, 1.0) + [down] * int(1.0 * fps)
+    frames = []
+    for e, v in path:
+        pose = _pose(elbow_int=e, arm_elev=v, bend=+1 if v > 45 else -1, lean=2)
+        frames.append({k: (x + rng.normal(0, noise), y + rng.normal(0, noise), c) for k, (x, y, c) in pose.items()})
+    return frames, [i / fps for i in range(len(frames))]
 
 
 def synth_standing(n: int = 45, fps: float = 30.0, scale: float = 1.0, noise: float = 0.001, seed: int = 1):

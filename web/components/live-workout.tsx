@@ -9,7 +9,7 @@ import { drawSkeleton, startCamera, startDemo, type PoseSource, type SkeletonSty
 import type { Exercise, RepDetail, WorkoutItem } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { CameraDiagram } from "./camera-diagram";
-import { RepStrip, topIssues } from "./rep-strip";
+import { EvidenceLine, RepStrip, topIssues } from "./rep-strip";
 import { Button } from "./ui/button";
 import { useConfirm } from "./ui/dialog";
 import { Input, Label, Select } from "./ui/primitives";
@@ -289,7 +289,7 @@ function SetScreen({ sessionId, cur, onFinished, onLeave }: { sessionId: number;
                   {summary.avg_form_score != null && <div><div className="font-display text-4xl font-black tabular-nums">{summary.avg_form_score}</div><div className="text-sm text-mute">form checks passed</div></div>}
                 </div>
                 <RepStrip reps={summary.reps_detail} compact />
-                {topIssues(summary.reps_detail).slice(0, 3).map(([m, n]) => <p key={m} className="mt-1 text-sm text-warn">{m} <span className="text-mute">({n}×)</span></p>)}
+                {topIssues(summary.reps_detail).slice(0, 3).map(([m, n, e]) => <p key={m} className="mt-1 text-sm text-warn">{m} <span className="text-mute">({n}×)</span><EvidenceLine e={e} /></p>)}
                 <Button variant="primary" size="lg" className="mt-5 w-full" onClick={finish}>Continue</Button>
               </>) : (<>
                 <p className="font-semibold text-warn" role="alert">{askManual === "empty" ? "No reps were detected." : "Couldn't save automatically."} Log it manually?</p>

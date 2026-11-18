@@ -22,10 +22,16 @@ def public(d, detail: bool = False) -> dict:
            "rep_joints": joints, "count_progress": d.rep.count_progress, "laterality": d.laterality}
     if detail:
         same = [x.name for x in state.registry.recognisable() if x.id != d.id and x.equivalence_key() == d.equivalence_key()]
+        live = [r for r in d.form_rules if r.validation.status != "disabled"]
         out.update(aliases=d.aliases, primary_joints=d.primary_joints, version=d.version,
-                   form_checks=[r.good or r.id for r in d.form_rules if r.good],
-                   view_limited_checks=[{"check": r.good or r.id, "views": r.views} for r in d.form_rules if r.views and r.good],
-                   limitations=([f"Counted the same as {', '.join(same)} - the camera can't tell them apart."] if same else []))
+                   form_checks=[r.good or r.id for r in live if r.good],
+                   view_limited_checks=[{"check": r.good or r.id, "views": r.views} for r in live if r.views and r.good],
+                   # how much each check has been tested: provisional = not yet measured against expert-labelled reps
+                   check_validation=[{"id": r.id, "check": r.good or r.bad or r.id, "status": r.validation.status,
+                                      "severity": r.effective_severity, "precision": r.validation.precision,
+                                      "false_per_100_clean": r.validation.false_per_100_clean} for r in d.form_rules],
+                   limitations=([f"Counted the same as {', '.join(same)} - the camera can't tell them apart."] if same else [])
+                   + list(d.limitations))
     return out
 
 

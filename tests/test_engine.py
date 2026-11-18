@@ -47,7 +47,7 @@ def test_fast_reps_counted_but_tempo_flagged(ex):
 @pytest.mark.parametrize("ex,fault,rule", [
     ("bicep_curl", "drift", "elbow_pinned"), ("bicep_curl", "lean", "torso_steady"),
     ("squat", "lean", "chest_up"), ("lateral_raise", "lean", "no_swing"),
-    ("shoulder_press", "lean", "no_lean_back"), ("overhead_triceps_extension", "lean", "no_lean"),
+    ("shoulder_press", "lean", "torso_upright"), ("overhead_triceps_extension", "lean", "no_lean"),
 ])
 def test_each_fault_trips_its_own_rule_only(ex, fault, rule):
     f, t = synth_sequence(ex, reps=4, fault=fault)

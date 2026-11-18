@@ -12,7 +12,7 @@ from typing import Deque, Dict, List, Optional
 import numpy as np
 
 from .calibration import facing_yaw_deg
-from .form import evaluate_rep, form_score, personal_insights, signal_table
+from .form import evaluate_rep, form_score, personal_insights, signal_name, signal_table
 from .personal_range import RangeCaptureError, capture_range, signal_key
 from .personalization import Baseline
 from .primitives import compute_signal
@@ -133,7 +133,10 @@ class LiveSession:
         if not ev.counted:
             rec["evidence"] = [{"rule_id": "partial", "type": "rom", "passed": False, "severity": "warn", "evaluated": True,
                                 "measured": round(ev.peak_progress, 3), "threshold": self.defn.rep.count_progress,
-                                "message": "Partial rep - not counted. Move through the full range."}]
+                                "message": "Partial rep - not counted. Move through the full range.",
+                                "signal": signal_name(self.defn.rep.signal) + " progress", "view": self.view,
+                                "window": [round(ev.t_start, 3), round(ev.t_end, 3)], "t_worst": round(ev.t_peak, 3),
+                                "status": "counter"}]
         self.reps.append(rec)
         if ev.counted:
             self.baseline.update({"counted": True, "peak_progress": ev.peak_progress, "duration": ev.duration,
@@ -142,7 +145,8 @@ class LiveSession:
         fails = [e for e in judged if not e["passed"]]
         goods = [e for e in judged if e["passed"]]
         fails.sort(key=lambda e: {"major": 0, "warn": 1, "info": 2}[e["severity"]])
-        self.feedback = ([{"status": "warning", "message": e["message"], "rule": e["rule_id"]} for e in fails[:2]]
+        self.feedback = ([{"status": "info" if e["severity"] == "info" else "warning", "message": e["message"], "rule": e["rule_id"]}
+                          for e in fails[:2]]
                          or [{"status": "good", "message": e["message"], "rule": e["rule_id"]} for e in goods[:2]])
         self.feedback += [{"status": "info", "message": m, "rule": "personal"} for m in insights[:1]]
 

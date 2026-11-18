@@ -56,7 +56,7 @@ class ExerciseRegistry:
     def load(cls, directory: Path = DEFINITIONS_DIR) -> "ExerciseRegistry":
         reg = cls()
         for p in sorted(Path(directory).glob("*.json")):
-            reg.register(ExerciseDefinition.model_validate(json.loads(p.read_text())))
+            reg.register(ExerciseDefinition.model_validate(json.loads(p.read_text(encoding="utf-8"))))
         return reg
 
     def register(self, d: ExerciseDefinition) -> None:

@@ -32,7 +32,7 @@
     ],
     "preferred": "front",
     "full_body": false,
-    "notes": ""
+    "notes": "Face the camera and stand far enough back that your hands stay in view with arms out to the side."
   },
   "required_joints": [
     "left_shoulder",
@@ -55,7 +55,17 @@
     },
     "rest": 10,
     "peak": 90,
-    "toward_peak_phase": "concentric"
+    "toward_peak_phase": "concentric",
+    "population_range": {
+      "rest": [
+        0,
+        35
+      ],
+      "peak": [
+        65,
+        115
+      ]
+    }
   },
   "form_rules": [
     {
@@ -112,7 +122,7 @@
       "min": null,
       "severity": "warn",
       "good": "No swinging",
-      "bad": "Avoid leaning or swinging"
+      "bad": "Avoid leaning or swinging to one side"
     },
     {
       "id": "arm_sync",
@@ -128,7 +138,10 @@
       "max": 12,
       "severity": "warn",
       "good": "Arms rise together",
-      "bad": "Arms are uneven"
+      "bad": "Arms are uneven",
+      "views": [
+        "front"
+      ]
     }
   ],
   "posture": [
@@ -148,5 +161,11 @@
       "scale": 30
     }
   ],
-  "motion_plane": "frontal"
+  "motion_plane": "frontal",
+  "version": 2,
+  "laterality": "bilateral",
+  "limitations": [
+    "Swinging forwards and backwards (using momentum from the hips) can't be seen from the front.",
+    "Shoulder shrugging isn't checked."
+  ]
 }

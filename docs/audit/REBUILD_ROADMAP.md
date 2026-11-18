@@ -32,7 +32,7 @@ M1 Trustworthy input ──► M2 Calibration v2 ──► M3 Counter v2 (squat,
 | M3 Rep counter v2 + personal range (squat, curl) | M1, M2 (range capture uses setup fingerprint), recorded data from M1 | L |
 | M4 Session protocol & product wiring | M1 | M |
 | M5 Premium frontend | M2, M3, M4 (real outputs to design around) | L |
-| M6 Shoulder press + lateral raise; form-rule validation | M3, expert-labelled data | M |
+| M6 Shoulder press + lateral raise; form-rule validation | M3, expert-labelled data | M — **built; expert validation pending** |
 | M7 Auto-detect (S1–S5) | M3, M6, human-labelled subject-disjoint dataset | L (gated) |
 | M8 Deferred features | Product decision | — |
 
@@ -237,6 +237,23 @@ M1 Trustworthy input ──► M2 Calibration v2 ──► M3 Counter v2 (squat,
 **Scope:** v2 definitions for press (front) and lateral raise (front); expert-labelled form data (`TEST_AND_EVALUATION_PLAN.md §2.4`); per-rule precision and false-warning rate; rules that miss their target are downgraded to `info` or disabled.
 
 **Acceptance criteria:** rep-count targets as M3 for both exercises; per-rule warning precision **≥ 0.8** and **≤ 5** false warnings per 100 clean reps (targets); every warning carries measured value, threshold, view and frames.
+
+### M6 status (implemented, synthetic-verified; expert validation pending)
+
+| Item | Status | Evidence |
+| --- | --- | --- |
+| Shoulder press v2 | Done | Rep signal changed from elbow angle to **upper-arm elevation**. Hanging and locked-out arms both read ~170° elbow angle, so v1 counted lowering the dumbbells after a set as an extra rep (**reproduced**: 6 counted for 5 presses; now 5 at 15/30/60 fps). Lockout is a separate `reach` check. `no_lean_back` became `torso_upright`: from the front only sideways lean is visible, and that limit is stated in the library |
+| Lateral raise v2 | Done | Population ranges, front-only `arm_sync`, stated limitations (forward/back swing, shrugging) |
+| Clean-set regression | Done | Zero warnings for both exercises at 4:3, 16:9, 3:4 and 9:16 and at ±30° yaw. In portrait the synthetic body stands farther back (at the default distance the hands leave a 9:16 frame) |
+| Fault coverage | Done | Each synthetic fault triggers its rule on every rep: lean, fast, no-lockout and asymmetric (press); lean, fast, bent-arms and asymmetric (raise) |
+| Explainable warnings | Done | Every evidence item carries `signal`, `view`, `window` [t0, t1], `t_worst` (the frame that decided it) and the rule's validation `status`; a test asserts no warning lacks them across 5 exercises × 6 faults. The live summary and History show "measured · limit · view · not yet validated" |
+| Rule validation status | Done | `FormRule.validation` (`provisional` / `validated` / `info_only` / `disabled`). Disabled rules are skipped; info-only rules show as tips and don't lower the score. The library badges each check ("untested" today) |
+| Validation harness `ml/form_eval.py` | Done | Replays labelled recordings, matches reps by time overlap, takes two-reviewer consensus (Cohen's kappa per rule), and computes per-rule precision (with Wilson 95% lower bound), recall, false warnings per 100 clean reps and the not-evaluated rate. It recommends validated / info_only / disabled / insufficient against the plan's targets, and `--apply --dataset NAME` writes the results into the definitions. Its numbers are checked on hand-computed cases and an end-to-end synthetic dataset |
+| `ml/replay.py` | Fixed | Now calls `finish()` like the live handler, so a recording's last rep that never fully returns is counted |
+| Per-rule precision ≥ 0.8 / ≤ 5 false per 100 clean reps | **Not measured** | Needs expert-labelled reps (§2.4: ≥ 30 per rule per exercise, ≥ 30% faulty, two reviewers). Every rule stays `provisional` until `ml.form_eval` runs on them |
+| Rep-count targets on real sets | **Not measured** | Needs the golden set (as M3) |
+
+**Next step needing data:** record press and raise sets with "Record landmarks", have two coaches write `<recording>.labels.<reviewer>.json` files, then run `python -m ml.form_eval DATA_DIR --apply --dataset <name>`.
 
 ---
 

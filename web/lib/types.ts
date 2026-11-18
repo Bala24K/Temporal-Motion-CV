@@ -5,7 +5,12 @@ export type Landmarks = Record<string, number[]>;
 export interface User { id: number; email: string; name: string; is_admin: boolean; goal: string | null; weekly_target: number }
 export interface Exercise { id: string; name: string; family: string; difficulty: string; target_muscles: string[]; secondary_muscles: string[];
   equipment: string[]; movement_patterns: string[]; camera: { preferred: string; supported_views: string[]; notes: string; full_body?: boolean }; form_checks?: string[];
-  rep_joints?: string[]; count_progress?: number; laterality?: string; limitations?: string[]; view_limited_checks?: { check: string; views: string[] }[] }
+  rep_joints?: string[]; count_progress?: number; laterality?: string; limitations?: string[]; view_limited_checks?: { check: string; views: string[] }[];
+  check_validation?: CheckValidation[] }
+/** How much a form check has been tested (exercise_system/models.py RuleValidation). */
+export interface CheckValidation { id: string; check: string; status: "provisional" | "validated" | "info_only" | "disabled"; severity: string;
+  precision: number | null; false_per_100_clean: number | null }
+export type Evidence = RepDetail["evidence"][number];
 export interface WorkoutItem { id: number; exercise_id: string | null; exercise_name: string; sets: number; reps: number; weight_kg: number; rest_seconds: number; ai_analysis: boolean; target_muscles: string[] }
 export interface Workout { id: number; name: string; notes: string; items: WorkoutItem[]; muscles: string[]; unsupported_count: number }
 export interface SetOut { id: number; exercise_id?: string | null; exercise_name: string; set_number: number; reps: number; partial_reps: number; weight_kg: number; avg_form_score: number | null;
@@ -37,4 +42,7 @@ export interface ModelVersion { id: number; kind: string; name: string; version:
 export type LiveState = StateOut;
 export type Recognition = RecognitionOut;
 export interface RepDetail { index: number; counted: boolean; peak_progress: number; duration: number; form_score: number | null;
-  evidence: { rule_id: string; passed: boolean; severity: string; message: string; evaluated?: boolean; measured: number | null; threshold: number | null }[] }
+  t_start?: number; t_end?: number;
+  evidence: { rule_id: string; passed: boolean; severity: string; message: string; evaluated?: boolean; measured: number | null; threshold: number | null;
+    signal?: string | null; view?: string | null; window?: number[] | null; t_worst?: number | null;
+    status?: "provisional" | "validated" | "info_only" | "disabled" | "counter" }[] }
